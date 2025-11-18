@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import authRoutes from "./authRoutes"
 
 export function createServer() {
   const app = express();
@@ -12,6 +13,8 @@ export function createServer() {
   app.get("/health", (_req, res) => {
     res.json({ status: "ok", service: "auth" });
   });
+
+  app.use(authRoutes)
 
   return app;
 }
