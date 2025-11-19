@@ -11,7 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:auth": "npm --workspace services/auth-service run dev",
     "dev:account": "npm --workspace services/account-service run dev",
-    "dev:transaction": "npm --workspace services/transaction-service run dev"
+    "dev:transaction": "npm --workspace services/transaction-service run dev",
+    "dev:fraud": "npm --workspace services/fraud-service run dev"
+
 
   },
   "keywords": [],

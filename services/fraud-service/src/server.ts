@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import transactionRoutes from "./transactionRoutes"
+import fraudRoutes from "./fraudRoutes";
 
 export function createServer() {
   const app = express();
@@ -9,11 +9,11 @@ export function createServer() {
   app.use(express.json());
 
   app.get("/health", (_req, res) => {
-    res.json({ status: "ok", service: "transaction" });
+    res.json({ status: "ok", service: "fraud" });
   });
 
-  // Transaction routes
-  app.use(transactionRoutes);
+  // Fraud routes
+  app.use(fraudRoutes);
 
   return app;
 }
