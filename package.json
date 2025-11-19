@@ -12,7 +12,9 @@
     "dev:auth": "npm --workspace services/auth-service run dev",
     "dev:account": "npm --workspace services/account-service run dev",
     "dev:transaction": "npm --workspace services/transaction-service run dev",
-    "dev:fraud": "npm --workspace services/fraud-service run dev"
+    "dev:fraud": "npm --workspace services/fraud-service run dev",
+    "dev:customer": "npm --workspace frontend/customer-app run dev"
+
 
 
   },
