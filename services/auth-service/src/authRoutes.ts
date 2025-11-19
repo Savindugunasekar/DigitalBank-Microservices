@@ -1,9 +1,9 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import prisma from "./prisma"
+import prisma, { Role, KycStatus } from "./prisma";
 import { AuthedRequest, authMiddleware } from "./authMiddleware";
-import { Role, KycStatus } from "@prisma/client";
+
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
