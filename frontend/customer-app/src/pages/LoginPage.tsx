@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { loginRequest } from "../api";
 import { useAuth } from "../auth";
 
@@ -33,7 +33,10 @@ function LoginPage() {
 
       // Try to read Axios-style error: err.response.data.message
       if (err && typeof err === "object") {
-        const maybeAny = err as { response?: { data?: { message?: string } }; message?: string };
+        const maybeAny = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
 
         if (maybeAny.response?.data?.message) {
           msg = maybeAny.response.data.message;
@@ -89,6 +92,15 @@ function LoginPage() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+        <div className="mt-4 text-xs text-slate-400 flex items-center justify-between">
+          <span>Don&apos;t have an account?</span>
+          <Link
+            to="/signup"
+            className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+          >
+            Create one
+          </Link>
+        </div>
       </form>
 
       <p className="mt-4 text-xs text-slate-400">

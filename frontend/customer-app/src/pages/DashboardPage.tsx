@@ -6,6 +6,7 @@ import {
   getTransactionsForAccount,
   createTransaction,
   getMyNotifications,
+  createAccount,
 } from "../api";
 
 // Helper to style transaction status chip
@@ -73,6 +74,37 @@ function DashboardPage() {
   const [notificationsError, setNotificationsError] = useState<string | null>(
     null
   );
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [createAccountError, setCreateAccountError] = useState<string | null>(
+    null
+  );
+  async function handleOpenAccount() {
+    if (!token) {
+      setCreateAccountError("You must be logged in to open an account.");
+      return;
+    }
+
+    try {
+      setCreatingAccount(true);
+      setCreateAccountError(null);
+
+      // For now, we create a default LKR account
+      const { account } = await createAccount({ currency: "LKR" }, token);
+
+      // Refresh account list
+      setAccounts((prev) => [...prev, account]);
+      setSelectedAccountId(account.id);
+    } catch (err: any) {
+      console.error("Create account failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to open a new account.";
+      setCreateAccountError(msg);
+    } finally {
+      setCreatingAccount(false);
+    }
+  }
 
   async function handleCreateTransaction(e: FormEvent) {
     e.preventDefault();
@@ -356,8 +388,29 @@ function DashboardPage() {
           )}
 
           {!accountsLoading && !accountsError && accounts.length === 0 && (
-            <div className="text-sm text-slate-300">
-              You don&apos;t have any accounts yet.
+            <div className="border border-slate-700 rounded-lg p-4 bg-slate-900/70">
+              <h3 className="text-sm font-semibold text-slate-100 mb-1">
+                You don&apos;t have any accounts yet
+              </h3>
+              <p className="text-xs text-slate-400 mb-3">
+                Open your first LKR current account to start receiving and
+                sending money.
+              </p>
+
+              {createAccountError && (
+                <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-3">
+                  {createAccountError}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => void handleOpenAccount()}
+                disabled={creatingAccount}
+                className="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-xs font-medium text-white"
+              >
+                {creatingAccount ? "Opening account..." : "Open LKR account"}
+              </button>
             </div>
           )}
 
@@ -449,7 +502,9 @@ function DashboardPage() {
           </div>
 
           {notificationsLoading && (
-            <div className="text-xs text-slate-300">Loading notifications...</div>
+            <div className="text-xs text-slate-300">
+              Loading notifications...
+            </div>
           )}
 
           {notificationsError && (
@@ -653,9 +708,7 @@ function DashboardPage() {
         )}
 
         {selectedAccountId && txLoading && (
-          <div className="text-sm text-slate-300">
-            Loading transactions...
-          </div>
+          <div className="text-sm text-slate-300">Loading transactions...</div>
         )}
 
         {selectedAccountId && txError && (
@@ -664,14 +717,11 @@ function DashboardPage() {
           </div>
         )}
 
-        {selectedAccountId &&
-          !txLoading &&
-          !txError &&
-          !hasAnyTransactions && (
-            <div className="text-sm text-slate-300">
-              No transactions for this account yet.
-            </div>
-          )}
+        {selectedAccountId && !txLoading && !txError && !hasAnyTransactions && (
+          <div className="text-sm text-slate-300">
+            No transactions for this account yet.
+          </div>
+        )}
 
         {selectedAccountId &&
           !txLoading &&

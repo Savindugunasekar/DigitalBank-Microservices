@@ -7,6 +7,9 @@ const TRANSACTION_BASE_URL = "http://localhost:4003";
 export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 
+export interface CreateAccountPayload {
+  currency?: string;
+}
 export interface LoginResponse {
   token: string;
   user: User;
@@ -21,6 +24,11 @@ export interface CreateTransactionPayload {
   isNewRecipient?: boolean;
 }
 
+export interface SignupPayload {
+  fullName: string;
+  email: string;
+  password: string;
+}
 export interface FraudCheckResult {
   decision: "ALLOW" | "FLAG" | "FLAGGED" | "BLOCK";
   score: number;
@@ -47,6 +55,14 @@ export async function loginRequest(
 
 export interface MyAccountsResponse {
   accounts: Account[];
+}
+
+export async function signup(payload: SignupPayload): Promise<void> {
+  await axios.post(`${AUTH_BASE_URL}/auth/signup`, payload, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }
 
 export async function getMyAccounts(token: string): Promise<MyAccountsResponse> {
@@ -110,4 +126,22 @@ export async function getMyNotifications(
   });
 
   return res.data as GetMyNotificationsResponse;
+}
+
+export async function createAccount(
+  payload: CreateAccountPayload,
+  token: string
+): Promise<{ account: Account }> {
+  const res = await axios.post<{ account: Account }>(
+    `${ACCOUNT_BASE_URL}/accounts`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return res.data;
 }

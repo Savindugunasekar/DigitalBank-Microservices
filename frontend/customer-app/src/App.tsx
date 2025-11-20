@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import RequireAuth from "./RequireAuth";
 import { useAuth } from "./auth";
+import SignupPage from "./pages/SignupPage";
 
 function App() {
   const { user, logout } = useAuth();
@@ -40,6 +41,7 @@ function App() {
       <main className="p-6 max-w-3xl mx-auto">
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/dashboard"
