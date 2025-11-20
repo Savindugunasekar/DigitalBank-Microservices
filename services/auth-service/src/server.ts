@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from "./authRoutes"
+import authRoutes from "./authRoutes";
+import adminRoutes from "./adminRoutes"; // 🔹 add this
 
 export function createServer() {
   const app = express();
@@ -14,7 +15,8 @@ export function createServer() {
     res.json({ status: "ok", service: "auth" });
   });
 
-  app.use(authRoutes)
+  app.use(authRoutes);
+  app.use(adminRoutes); // 🔹 add this
 
   return app;
 }

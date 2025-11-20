@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import accountRoutes from "./accountRoutes"
+import accountRoutes from "./accountRoutes";
+import adminRoutes from "./adminRoutes"; // 🔹 add this
 
 export function createServer() {
   const app = express();
@@ -12,7 +13,8 @@ export function createServer() {
     res.json({ status: "ok", service: "account" });
   });
 
-  app.use(accountRoutes)
+  app.use(accountRoutes);
+  app.use(adminRoutes); // 🔹 add this
 
   return app;
 }

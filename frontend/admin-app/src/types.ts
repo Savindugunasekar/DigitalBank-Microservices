@@ -12,7 +12,6 @@ export interface LoginResponse {
   user: User;
 }
 
-// Match your transaction-service enum
 export type TransactionStatus =
   | "PENDING"
   | "EXECUTED"
@@ -32,13 +31,12 @@ export interface Transaction {
 }
 
 export interface TransactionStatsDay {
-  date: string; // YYYY-MM-DD
+  date: string;
   flagged: number;
   executed: number;
   rejected: number;
 }
 
-// ✅ New: Notification type (same idea as customer app)
 export interface Notification {
   id: string;
   userId: string;
@@ -48,4 +46,17 @@ export interface Notification {
   isRead: boolean;
   createdAt: string;
   readAt: string | null;
+}
+
+export type AccountStatus = "ACTIVE" | "FROZEN" | "CLOSED";
+
+export interface AdminAccount {
+  id: string;
+  userId: string;
+  accountNumber: string;
+  currency: string;
+  balance: number;
+  status: AccountStatus;
+  createdAt: string;
+  updatedAt: string;
 }

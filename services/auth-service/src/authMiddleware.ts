@@ -38,3 +38,18 @@ export function authMiddleware(
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 }
+
+// 🔹 NEW: helper to enforce roles
+export function requireRole(allowedRoles: string[]) {
+  return (req: AuthedRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden: insufficient role" });
+    }
+
+    next();
+  };
+}
