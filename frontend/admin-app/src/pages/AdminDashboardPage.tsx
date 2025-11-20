@@ -1,3 +1,5 @@
+// frontend/admin-app/src/pages/AdminDashboardPage.tsx
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth";
 import type {
@@ -8,6 +10,7 @@ import type {
   AdminAccount,
   Role,
   AccountStatus,
+  KycStatus,
 } from "../types";
 import {
   getFlaggedTransactions,
@@ -19,6 +22,7 @@ import {
   getAdminAccounts,
   updateUserRole,
   updateAccountStatus,
+  updateUserKycStatus,
 } from "../api";
 import {
   ResponsiveContainer,
@@ -245,6 +249,26 @@ function AdminDashboardPage() {
       setAccountsError(msg);
     } finally {
       setAccountActionId(null);
+    }
+  }
+
+  async function handleChangeUserKyc(
+    userId: string,
+    status: KycStatus
+  ): Promise<void> {
+    if (!token) return;
+    try {
+      const updated = await updateUserKycStatus(userId, status, token);
+      setAdminUsers((prev) =>
+        prev.map((u) => (u.id === updated.id ? updated : u))
+      );
+    } catch (err: any) {
+      console.error("Update user KYC failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update user KYC status.";
+      setUsersError(msg);
     }
   }
 
@@ -646,59 +670,111 @@ function AdminDashboardPage() {
                         Role
                       </th>
                       <th className="px-3 py-2 text-left border-b border-slate-700">
+                        KYC
+                      </th>
+                      <th className="px-3 py-2 text-left border-b border-slate-700">
                         Created
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {adminUsers.map((u) => (
-                      <tr
-                        key={u.id}
-                        className="odd:bg-slate-900/40 even:bg-slate-900/10"
-                      >
-                        <td className="px-3 py-2 border-b border-slate-800">
-                          <span className="font-mono text-[11px]">
-                            {u.id.slice(0, 8)}...
-                          </span>
-                        </td>
-                        <td className="px-3 py-2 border-b border-slate-800">
-                          {u.fullName}
-                        </td>
-                        <td className="px-3 py-2 border-b border-slate-800">
-                          {u.email}
-                        </td>
-                        <td className="px-3 py-2 border-b border-slate-800">
-                          <select
-                            value={u.role}
-                            onChange={(e) =>
-                              void handleChangeUserRole(
-                                u.id,
-                                e.target.value as Role
-                              )
-                            }
-                            className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-xs"
-                          >
-                            <option value="CUSTOMER">CUSTOMER</option>
-                            <option value="ADMIN">ADMIN</option>
-                            <option value="RISK_OFFICER">RISK_OFFICER</option>
-                          </select>
-                        </td>
-                        <td className="px-3 py-2 border-b border-slate-800">
-                          <span className="text-[11px] text-slate-300">
-                            {/* @ts-ignore ignoring missing createdAt select if not added */}
-                            {u["createdAt"]
-                              ? new Date(
-                                  (u as any).createdAt
-                                ).toLocaleDateString(undefined, {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })
-                              : "—"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {adminUsers.map((u) => {
+                      const kyc = (u.kycStatus as KycStatus) || "PENDING";
+
+                      const kycClass =
+                        kyc === "VERIFIED"
+                          ? "bg-emerald-900/40 text-emerald-300 border-emerald-600"
+                          : kyc === "REJECTED"
+                          ? "bg-red-900/40 text-red-300 border-red-600"
+                          : "bg-amber-900/40 text-amber-300 border-amber-600";
+
+                      return (
+                        <tr
+                          key={u.id}
+                          className="odd:bg-slate-900/40 even:bg-slate-900/10"
+                        >
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            <span className="font-mono text-[11px]">
+                              {u.id.slice(0, 8)}...
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            {u.fullName}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            {u.email}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            <select
+                              value={u.role}
+                              onChange={(e) =>
+                                void handleChangeUserRole(
+                                  u.id,
+                                  e.target.value as Role
+                                )
+                              }
+                              className="bg-slate-900 border border-slate-600 rounded px-2 py-1 text-xs"
+                            >
+                              <option value="CUSTOMER">CUSTOMER</option>
+                              <option value="ADMIN">ADMIN</option>
+                              <option value="RISK_OFFICER">
+                                RISK_OFFICER
+                              </option>
+                            </select>
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`px-2 py-0.5 rounded-full border text-[10px] uppercase ${kycClass}`}
+                              >
+                                {kyc}
+                              </span>
+                              {kyc === "PENDING" && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="px-2 py-0.5 rounded-md text-[10px] bg-emerald-600 hover:bg-emerald-500"
+                                    onClick={() =>
+                                      void handleChangeUserKyc(
+                                        u.id,
+                                        "VERIFIED"
+                                      )
+                                    }
+                                  >
+                                    Verify
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="px-2 py-0.5 rounded-md text-[10px] bg-red-600 hover:bg-red-500"
+                                    onClick={() =>
+                                      void handleChangeUserKyc(
+                                        u.id,
+                                        "REJECTED"
+                                      )
+                                    }
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-800">
+                            <span className="text-[11px] text-slate-300">
+                              {(u as any).createdAt
+                                ? new Date(
+                                    (u as any).createdAt
+                                  ).toLocaleDateString(undefined, {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })
+                                : "—"}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

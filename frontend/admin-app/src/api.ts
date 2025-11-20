@@ -8,6 +8,7 @@ import type {
   AdminAccount,
   Role,
   AccountStatus,
+  KycStatus
 } from "./types";
 
 export const AUTH_BASE_URL = "http://localhost:4001";
@@ -194,4 +195,32 @@ export async function updateAccountStatus(
   );
 
   return res.data.account;
+}
+
+export async function updateUserKycStatus(
+  id: string,
+  status: KycStatus,
+  token: string
+): Promise<User> {
+  let path: string;
+
+  if (status === "VERIFIED") {
+    path = `${AUTH_BASE_URL}/admin/kyc/${id}/verify`;
+  } else if (status === "REJECTED") {
+    path = `${AUTH_BASE_URL}/admin/kyc/${id}/reject`;
+  } else {
+    throw new Error("Only VERIFIED or REJECTED are allowed here");
+  }
+
+  const res = await axios.patch<{ user: User }>(
+    path,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.user;
 }

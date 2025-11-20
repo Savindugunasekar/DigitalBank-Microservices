@@ -1,10 +1,14 @@
 export type Role = "CUSTOMER" | "ADMIN" | "RISK_OFFICER";
 
+export type KycStatus = "PENDING" | "VERIFIED" | "REJECTED";
+
+
 export interface User {
   id: string;
   email: string;
   fullName: string;
   role: Role;
+  kycStatus?: KycStatus;
 }
 
 export interface LoginResponse {
