@@ -14,7 +14,8 @@
     "dev:transaction": "npm --workspace services/transaction-service run dev",
     "dev:fraud": "npm --workspace services/fraud-service run dev",
     "dev:notification": "npm --workspace services/notification-service run dev",
-    "dev:customer": "npm --workspace frontend/customer-app run dev"
+    "dev:customer": "npm --workspace frontend/customer-app run dev",
+    "dev:admin-app": "npm --workspace frontend/admin-app run dev"
 
 
 
