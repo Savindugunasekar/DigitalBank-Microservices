@@ -16,7 +16,13 @@ export const TRANSACTION_BASE_URL = "http://localhost:4003";
 export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 // ---------- Auth ----------
-
+export interface AdminCreateUserPayload {
+  fullName: string;
+  email: string;
+  password: string;
+  role?: Role;
+  kycStatus?: KycStatus;
+}
 export async function login(email: string, password: string) {
   const res = await axios.post<LoginResponse>(`${AUTH_BASE_URL}/auth/login`, {
     email,
@@ -218,6 +224,24 @@ export async function updateUserKycStatus(
     {
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data.user;
+}
+
+export async function adminCreateUser(
+  payload: AdminCreateUserPayload,
+  token: string
+): Promise<User> {
+  const res = await axios.post<{ user: User }>(
+    `${AUTH_BASE_URL}/admin/users`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     }
   );

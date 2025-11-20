@@ -23,6 +23,7 @@ import {
   updateUserRole,
   updateAccountStatus,
   updateUserKycStatus,
+  adminCreateUser,
 } from "../api";
 import {
   ResponsiveContainer,
@@ -54,8 +55,9 @@ function AdminDashboardPage() {
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
-  const [notificationsError, setNotificationsError] =
-    useState<string | null>(null);
+  const [notificationsError, setNotificationsError] = useState<string | null>(
+    null
+  );
 
   const [adminUsers, setAdminUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -65,6 +67,65 @@ function AdminDashboardPage() {
   const [accountsLoading, setAccountsLoading] = useState(false);
   const [accountsError, setAccountsError] = useState<string | null>(null);
   const [accountActionId, setAccountActionId] = useState<string | null>(null);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [createName, setCreateName] = useState("");
+  const [createEmail, setCreateEmail] = useState("");
+  const [createPassword, setCreatePassword] = useState("");
+  const [createRole, setCreateRole] = useState<Role>("CUSTOMER");
+  const [createKycStatus, setCreateKycStatus] = useState<KycStatus>("PENDING");
+  const [createUserLoading, setCreateUserLoading] = useState(false);
+  const [createUserError, setCreateUserError] = useState<string | null>(null);
+
+  async function handleCreateUserSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token) return;
+
+    setCreateUserError(null);
+
+    if (!createName.trim() || !createEmail.trim() || !createPassword.trim()) {
+      setCreateUserError("Please fill in name, email and password.");
+      return;
+    }
+
+    if (createPassword.length < 6) {
+      setCreateUserError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    try {
+      setCreateUserLoading(true);
+      const newUser = await adminCreateUser(
+        {
+          fullName: createName.trim(),
+          email: createEmail.trim(),
+          password: createPassword,
+          role: createRole,
+          kycStatus: createKycStatus,
+        },
+        token
+      );
+
+      // prepend to user list
+      setAdminUsers((prev) => [newUser, ...prev]);
+
+      // reset form
+      setCreateName("");
+      setCreateEmail("");
+      setCreatePassword("");
+      setCreateRole("CUSTOMER");
+      setCreateKycStatus("PENDING");
+      setShowCreateUser(false);
+    } catch (err: any) {
+      console.error("Admin create user failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to create user.";
+      setCreateUserError(msg);
+    } finally {
+      setCreateUserLoading(false);
+    }
+  }
 
   async function loadFlagged() {
     if (!token) return;
@@ -134,9 +195,7 @@ function AdminDashboardPage() {
     } catch (err: any) {
       console.error("Failed to load users", err);
       const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to load users.";
+        err?.response?.data?.message || err?.message || "Failed to load users.";
       setUsersError(msg);
     } finally {
       setUsersLoading(false);
@@ -365,15 +424,12 @@ function AdminDashboardPage() {
                           <div className="flex justify-between items-center mb-1">
                             <span className="font-semibold">{n.title}</span>
                             <span className="text-[10px] text-slate-300">
-                              {new Date(n.createdAt).toLocaleString(
-                                undefined,
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )}
+                              {new Date(n.createdAt).toLocaleString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
                           </div>
                           <div className="text-[11px] text-slate-200">
@@ -632,9 +688,121 @@ function AdminDashboardPage() {
         {/* USERS TAB */}
         {activeTab === "USERS" && (
           <section className="mt-2">
-            <h2 className="text-sm font-semibold text-slate-200 mb-2">
-              Users
-            </h2>
+            <h2 className="text-sm font-semibold text-slate-200 mb-2">Users</h2>
+            <button
+              type="button"
+              onClick={() => setShowCreateUser((v) => !v)}
+              className="px-3 py-1.5 rounded-lg text-xs bg-blue-600 hover:bg-blue-500 border border-blue-400"
+            >
+              {showCreateUser ? "Cancel" : "Create user"}
+            </button>
+            {/* Create user panel */}
+            {showCreateUser && (
+              <form
+                onSubmit={handleCreateUserSubmit}
+                className="mb-4 border border-slate-700 rounded-lg p-3 bg-slate-900/60 space-y-3"
+              >
+                <h3 className="text-xs font-semibold text-slate-200 mb-1">
+                  New user details
+                </h3>
+
+                {createUserError && (
+                  <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2">
+                    {createUserError}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-[11px] text-slate-300">
+                      Full name
+                    </label>
+                    <input
+                      type="text"
+                      value={createName}
+                      onChange={(e) => setCreateName(e.target.value)}
+                      className="w-full rounded-md bg-slate-950 border border-slate-600 px-2 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="Jane Doe"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[11px] text-slate-300">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={createEmail}
+                      onChange={(e) => setCreateEmail(e.target.value)}
+                      className="w-full rounded-md bg-slate-950 border border-slate-600 px-2 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="jane@example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[11px] text-slate-300">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      value={createPassword}
+                      onChange={(e) => setCreatePassword(e.target.value)}
+                      className="w-full rounded-md bg-slate-950 border border-slate-600 px-2 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      placeholder="At least 6 characters"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[11px] text-slate-300">
+                      Role
+                    </label>
+                    <select
+                      value={createRole}
+                      onChange={(e) => setCreateRole(e.target.value as Role)}
+                      className="w-full rounded-md bg-slate-950 border border-slate-600 px-2 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="CUSTOMER">CUSTOMER</option>
+                      <option value="ADMIN">ADMIN</option>
+                      <option value="RISK_OFFICER">RISK_OFFICER</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[11px] text-slate-300">
+                      KYC status
+                    </label>
+                    <select
+                      value={createKycStatus}
+                      onChange={(e) =>
+                        setCreateKycStatus(e.target.value as KycStatus)
+                      }
+                      className="w-full rounded-md bg-slate-950 border border-slate-600 px-2 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="PENDING">PENDING</option>
+                      <option value="VERIFIED">VERIFIED</option>
+                      <option value="REJECTED">REJECTED</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateUser(false)}
+                    className="px-3 py-1.5 rounded-md text-xs bg-slate-700 hover:bg-slate-600 border border-slate-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={createUserLoading}
+                    className="px-3 py-1.5 rounded-md text-xs bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60"
+                  >
+                    {createUserLoading ? "Creating..." : "Create user"}
+                  </button>
+                </div>
+              </form>
+            )}
 
             {usersError && (
               <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-3">
@@ -717,9 +885,7 @@ function AdminDashboardPage() {
                             >
                               <option value="CUSTOMER">CUSTOMER</option>
                               <option value="ADMIN">ADMIN</option>
-                              <option value="RISK_OFFICER">
-                                RISK_OFFICER
-                              </option>
+                              <option value="RISK_OFFICER">RISK_OFFICER</option>
                             </select>
                           </td>
                           <td className="px-3 py-2 border-b border-slate-800">
@@ -735,10 +901,7 @@ function AdminDashboardPage() {
                                     type="button"
                                     className="px-2 py-0.5 rounded-md text-[10px] bg-emerald-600 hover:bg-emerald-500"
                                     onClick={() =>
-                                      void handleChangeUserKyc(
-                                        u.id,
-                                        "VERIFIED"
-                                      )
+                                      void handleChangeUserKyc(u.id, "VERIFIED")
                                     }
                                   >
                                     Verify
@@ -747,10 +910,7 @@ function AdminDashboardPage() {
                                     type="button"
                                     className="px-2 py-0.5 rounded-md text-[10px] bg-red-600 hover:bg-red-500"
                                     onClick={() =>
-                                      void handleChangeUserKyc(
-                                        u.id,
-                                        "REJECTED"
-                                      )
+                                      void handleChangeUserKyc(u.id, "REJECTED")
                                     }
                                   >
                                     Reject
@@ -796,9 +956,7 @@ function AdminDashboardPage() {
             )}
 
             {accountsLoading && (
-              <div className="text-sm text-slate-300">
-                Loading accounts...
-              </div>
+              <div className="text-sm text-slate-300">Loading accounts...</div>
             )}
 
             {!accountsLoading &&
@@ -841,9 +999,7 @@ function AdminDashboardPage() {
                         className="odd:bg-slate-900/40 even:bg-slate-900/10"
                       >
                         <td className="px-3 py-2 border-b border-slate-800">
-                          <span className="font-mono">
-                            {a.accountNumber}
-                          </span>
+                          <span className="font-mono">{a.accountNumber}</span>
                         </td>
                         <td className="px-3 py-2 border-b border-slate-800">
                           <span className="font-mono text-[11px]">

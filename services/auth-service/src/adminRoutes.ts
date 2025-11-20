@@ -1,6 +1,7 @@
 import { Router } from "express";
 import prisma from "./prisma";
 import { authMiddleware, requireRole, AuthedRequest } from "./authMiddleware";
+import bcrypt from "bcrypt"; 
 
 const router = Router();
 
@@ -30,6 +31,75 @@ router.get(
       return res.json({ users });
     } catch (err) {
       console.error("Get admin users error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+
+router.post(
+  "/admin/users",
+  authMiddleware,
+  requireRole(["ADMIN"]),
+  async (req: AuthedRequest, res) => {
+    try {
+      const {
+        fullName,
+        email,
+        password,
+        role,
+        kycStatus,
+      }: {
+        fullName?: string;
+        email?: string;
+        password?: string;
+        role?: string;
+        kycStatus?: string;
+      } = req.body;
+
+      if (!fullName || !email || !password) {
+        return res.status(400).json({
+          message: "fullName, email and password are required",
+        });
+      }
+
+      const allowedRoles = ["CUSTOMER", "ADMIN", "RISK_OFFICER"];
+      const finalRole = role && allowedRoles.includes(role) ? role : "CUSTOMER";
+
+      const allowedKyc = ["PENDING", "VERIFIED", "REJECTED"];
+      const finalKyc =
+        kycStatus && allowedKyc.includes(kycStatus) ? kycStatus : "PENDING";
+
+      // hash password
+      const hashed = await bcrypt.hash(password, 10);
+
+      const user = await prisma.user.create({
+        data: {
+          fullName,
+          email,
+          password: hashed,
+          role: finalRole as any,
+          kycStatus: finalKyc as any,
+        },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+          kycStatus: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      return res.status(201).json({ user });
+    } catch (err: any) {
+      console.error("Admin create user error:", err);
+
+      // Prisma unique constraint on email
+      if (err.code === "P2002") {
+        return res.status(409).json({ message: "Email already in use" });
+      }
+
       return res.status(500).json({ message: "Internal server error" });
     }
   }
