@@ -430,4 +430,98 @@ router.post(
   }
 );
 
+// ----------------------------------------------
+// ADMIN: risk analytics stats
+// GET /admin/transactions/stats?days=30
+// ----------------------------------------------
+router.get(
+  "/admin/transactions/stats",
+  authMiddleware,
+  requireRole(["ADMIN", "RISK_OFFICER"]),
+  async (req: AuthedRequest, res) => {
+    try {
+      const daysRaw = req.query.days as string | undefined;
+      const days = daysRaw ? Number(daysRaw) : 30;
+      const safeDays = !isNaN(days) && days > 0 && days <= 365 ? days : 30;
+
+      const since = new Date();
+      since.setDate(since.getDate() - safeDays);
+
+      // Fetch relevant transactions
+      const txs = await prisma.transaction.findMany({
+        where: {
+          createdAt: {
+            gte: since,
+          },
+          status: {
+            in: [
+              TransactionStatus.FLAGGED,
+              TransactionStatus.EXECUTED,
+              TransactionStatus.REJECTED,
+            ],
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      });
+
+      // Group by date (YYYY-MM-DD)
+      const map = new Map<
+        string,
+        { date: string; flagged: number; executed: number; rejected: number }
+      >();
+
+      for (const tx of txs) {
+        const d = new Date(tx.createdAt);
+        const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+
+        if (!map.has(key)) {
+          map.set(key, {
+            date: key,
+            flagged: 0,
+            executed: 0,
+            rejected: 0,
+          });
+        }
+
+        const entry = map.get(key)!;
+
+        if (tx.status === TransactionStatus.FLAGGED) {
+          entry.flagged += 1;
+        } else if (tx.status === TransactionStatus.EXECUTED) {
+          entry.executed += 1;
+        } else if (tx.status === TransactionStatus.REJECTED) {
+          entry.rejected += 1;
+        }
+      }
+
+      // Fill missing days with zeros so chart doesn’t have gaps
+      const result: { date: string; flagged: number; executed: number; rejected: number }[] = [];
+      const today = new Date();
+
+      for (let i = safeDays - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().slice(0, 10);
+
+        if (map.has(key)) {
+          result.push(map.get(key)!);
+        } else {
+          result.push({
+            date: key,
+            flagged: 0,
+            executed: 0,
+            rejected: 0,
+          });
+        }
+      }
+
+      return res.json({ stats: result });
+    } catch (err) {
+      console.error("Get transaction stats error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
+
+
 export default router;

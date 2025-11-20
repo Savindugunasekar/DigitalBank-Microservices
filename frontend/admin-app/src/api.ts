@@ -1,8 +1,14 @@
 import axios from "axios";
-import type { LoginResponse, Transaction } from "./types";
+import type {
+  LoginResponse,
+  Transaction,
+  TransactionStatsDay,
+  Notification,
+} from "./types";
 
 export const AUTH_BASE_URL = "http://localhost:4001";
 export const TRANSACTION_BASE_URL = "http://localhost:4003";
+export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 // ---------- Auth ----------
 
@@ -64,4 +70,48 @@ export async function rejectFlaggedTransaction(
       },
     }
   );
+}
+
+// ---------- Risk analytics stats ----------
+
+export interface GetTransactionStatsResponse {
+  stats: TransactionStatsDay[];
+}
+
+export async function getTransactionStats(
+  token: string,
+  days = 30
+): Promise<GetTransactionStatsResponse> {
+  const res = await axios.get<GetTransactionStatsResponse>(
+    `${TRANSACTION_BASE_URL}/admin/transactions/stats`,
+    {
+      params: { days },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+}
+
+// ---------- Notifications for current admin ----------
+
+export interface GetMyNotificationsResponse {
+  notifications: Notification[];
+}
+
+export async function getMyNotifications(
+  token: string
+): Promise<GetMyNotificationsResponse> {
+  const res = await axios.get<GetMyNotificationsResponse>(
+    `${NOTIFICATION_BASE_URL}/notifications/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
 }

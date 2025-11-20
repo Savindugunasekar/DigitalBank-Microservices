@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth";
-import type { Transaction } from "../types";
+import type { Transaction, TransactionStatsDay, Notification } from "../types";
 import {
   getFlaggedTransactions,
   approveFlaggedTransaction,
   rejectFlaggedTransaction,
+  getTransactionStats,
+  getMyNotifications,
 } from "../api";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 function AdminDashboardPage() {
   const { user, token, logout } = useAuth();
@@ -14,6 +26,17 @@ function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+
+  const [stats, setStats] = useState<TransactionStatsDay[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [statsDays, setStatsDays] = useState(30);
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState<string | null>(
+    null
+  );
 
   async function loadFlagged() {
     if (!token) return;
@@ -35,8 +58,48 @@ function AdminDashboardPage() {
     }
   }
 
+  async function loadStats(days: number) {
+    if (!token) return;
+    try {
+      setStatsLoading(true);
+      setStatsError(null);
+      const data = await getTransactionStats(token, days);
+      setStats(data.stats);
+    } catch (err: any) {
+      console.error("Failed to load stats", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load analytics data.";
+      setStatsError(msg);
+    } finally {
+      setStatsLoading(false);
+    }
+  }
+
+  async function loadNotifications() {
+    if (!token) return;
+    try {
+      setNotificationsLoading(true);
+      setNotificationsError(null);
+      const data = await getMyNotifications(token);
+      setNotifications(data.notifications);
+    } catch (err: any) {
+      console.error("Failed to load notifications", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load notifications.";
+      setNotificationsError(msg);
+    } finally {
+      setNotificationsLoading(false);
+    }
+  }
+
   useEffect(() => {
     void loadFlagged();
+    void loadStats(statsDays);
+    void loadNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -46,6 +109,8 @@ function AdminDashboardPage() {
       setActionLoadingId(id);
       await approveFlaggedTransaction(id, token);
       await loadFlagged();
+      await loadStats(statsDays);
+      await loadNotifications();
     } catch (err: any) {
       console.error("Approve failed", err);
       const msg =
@@ -64,6 +129,8 @@ function AdminDashboardPage() {
       setActionLoadingId(id);
       await rejectFlaggedTransaction(id, token);
       await loadFlagged();
+      await loadStats(statsDays);
+      await loadNotifications();
     } catch (err: any) {
       console.error("Reject failed", err);
       const msg =
@@ -96,7 +163,81 @@ function AdminDashboardPage() {
           </button>
         </header>
 
-        <section className="mb-4">
+        {/* Notifications panel */}
+        <section className="mb-4 bg-slate-900 border border-slate-700 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm font-semibold text-slate-200">
+              Notifications
+            </h2>
+          </div>
+
+          {notificationsLoading && (
+            <div className="text-xs text-slate-300">
+              Loading notifications...
+            </div>
+          )}
+
+          {notificationsError && (
+            <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-2">
+              {notificationsError}
+            </div>
+          )}
+
+          {!notificationsLoading &&
+            !notificationsError &&
+            notifications.length === 0 && (
+              <div className="text-xs text-slate-400">
+                No notifications for this admin yet.
+              </div>
+            )}
+
+          {!notificationsLoading &&
+            !notificationsError &&
+            notifications.length > 0 && (
+              <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                {notifications.map((n) => {
+                  const typeColor =
+                    n.type === "FRAUD_ALERT"
+                      ? "border-amber-500/60 bg-amber-950/30"
+                      : n.type === "TRANSACTION"
+                      ? "border-emerald-500/60 bg-emerald-950/30"
+                      : "border-slate-600 bg-slate-950/40";
+
+                  return (
+                    <div
+                      key={n.id}
+                      className={`border rounded-md px-3 py-2 text-xs text-slate-100 ${typeColor}`}
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold">{n.title}</span>
+                        <span className="text-[10px] text-slate-300">
+                          {new Date(n.createdAt).toLocaleString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-200">
+                        {n.message}
+                      </div>
+                      <div className="mt-1 text-[10px] text-slate-400">
+                        {n.type === "FRAUD_ALERT"
+                          ? "Fraud alert"
+                          : n.type === "TRANSACTION"
+                          ? "Transaction"
+                          : "System"}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+        </section>
+
+        {/* Flagged transactions table */}
+        <section className="mb-6">
           <h2 className="text-sm font-semibold text-slate-200 mb-2">
             Flagged transactions
           </h2>
@@ -217,6 +358,111 @@ function AdminDashboardPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+        </section>
+
+        {/* Risk analytics */}
+        <section className="mt-2">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm font-semibold text-slate-200">
+              Risk analytics
+            </h2>
+
+            <div className="flex items-center gap-2 text-xs">
+              <span className="text-slate-400">Range:</span>
+              {[7, 14, 30].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => {
+                    setStatsDays(d);
+                    void loadStats(d);
+                  }}
+                  className={`px-2 py-0.5 rounded-full border ${
+                    statsDays === d
+                      ? "bg-blue-600 border-blue-400 text-white"
+                      : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
+                  }`}
+                >
+                  Last {d} days
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {statsError && (
+            <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-3">
+              {statsError}
+            </div>
+          )}
+
+          {statsLoading && (
+            <div className="text-sm text-slate-300">
+              Loading analytics...
+            </div>
+          )}
+
+          {!statsLoading && stats.length === 0 && !statsError && (
+            <div className="text-sm text-slate-300">
+              No data for this period yet.
+            </div>
+          )}
+
+          {!statsLoading && stats.length > 0 && (
+            <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 mt-2">
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={stats}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10, fill: "#cbd5f5" }}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tick={{ fontSize: 10, fill: "#cbd5f5" }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#020617",
+                        borderColor: "#1e293b",
+                        fontSize: 11,
+                      }}
+                      labelStyle={{ color: "#e5e7eb" }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Line
+                      type="monotone"
+                      dataKey="flagged"
+                      name="Flagged"
+                      stroke="#f97316"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="executed"
+                      name="Approved (Executed)"
+                      stroke="#22c55e"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="rejected"
+                      name="Rejected"
+                      stroke="#ef4444"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <p className="mt-2 text-[11px] text-slate-400">
+                Daily counts of flagged, approved (executed) and rejected
+                transactions over the selected period.
+              </p>
             </div>
           )}
         </section>

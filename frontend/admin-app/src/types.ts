@@ -30,3 +30,22 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface TransactionStatsDay {
+  date: string; // YYYY-MM-DD
+  flagged: number;
+  executed: number;
+  rejected: number;
+}
+
+// ✅ New: Notification type (same idea as customer app)
+export interface Notification {
+  id: string;
+  userId: string;
+  type: "TRANSACTION" | "FRAUD_ALERT" | "SYSTEM";
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  readAt: string | null;
+}
