@@ -40,3 +40,14 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: "TRANSACTION" | "FRAUD_ALERT" | "SYSTEM";
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  readAt: string | null;
+}

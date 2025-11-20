@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/notification-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationType {
+  TRANSACTION
+  FRAUD_ALERT
+  SYSTEM
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String // foreign key to auth-service User.id (not enforced here, just stored)
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+}

@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import type { Account, Transaction } from "../types";
+import type { Account, Transaction, Notification } from "../types";
 import { useAuth } from "../auth";
 import {
   getMyAccounts,
   getTransactionsForAccount,
   createTransaction,
+  getMyNotifications,
 } from "../api";
 
 // Helper to style transaction status chip
@@ -65,6 +66,13 @@ function DashboardPage() {
 
   // Transaction filter state
   const [txFilter, setTxFilter] = useState<TxFilter>("ALL");
+
+  // Notifications state
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [notificationsError, setNotificationsError] = useState<string | null>(
+    null
+  );
 
   async function handleCreateTransaction(e: FormEvent) {
     e.preventDefault();
@@ -143,7 +151,9 @@ function DashboardPage() {
           !accountsData.accounts.find((a) => a.id === selectedAccountId)
         ) {
           setSelectedAccountId(
-            accountsData.accounts.length > 0 ? accountsData.accounts[0].id : null
+            accountsData.accounts.length > 0
+              ? accountsData.accounts[0].id
+              : null
           );
         }
 
@@ -156,9 +166,15 @@ function DashboardPage() {
           );
           setTransactions(transactions);
         }
+
+        // 3) Refresh notifications
+        setNotificationsLoading(true);
+        const { notifications } = await getMyNotifications(token!);
+        setNotifications(notifications);
       } finally {
         setAccountsLoading(false);
         setTxLoading(false);
+        setNotificationsLoading(false);
       }
     } catch (err: any) {
       console.error(err);
@@ -246,6 +262,42 @@ function DashboardPage() {
     void fetchTransactions();
   }, [token, selectedAccountId]);
 
+  // Fetch notifications when token changes (or on first load)
+  useEffect(() => {
+    if (!token) {
+      setNotificationsError("You are not logged in.");
+      return;
+    }
+
+    const fetchNotifications = async () => {
+      try {
+        setNotificationsLoading(true);
+        setNotificationsError(null);
+        const data = await getMyNotifications(token);
+        setNotifications(data.notifications);
+      } catch (err: unknown) {
+        console.error("Failed to fetch notifications", err);
+        let msg = "Failed to fetch notifications.";
+        if (err && typeof err === "object") {
+          const maybeAny = err as {
+            response?: { data?: { message?: string } };
+            message?: string;
+          };
+          if (maybeAny.response?.data?.message) {
+            msg = maybeAny.response.data.message;
+          } else if (typeof maybeAny.message === "string") {
+            msg = maybeAny.message;
+          }
+        }
+        setNotificationsError(msg);
+      } finally {
+        setNotificationsLoading(false);
+      }
+    };
+
+    void fetchNotifications();
+  }, [token]);
+
   const selectedAccount =
     accounts.find((a) => a.id === selectedAccountId) ?? null;
 
@@ -262,7 +314,7 @@ function DashboardPage() {
       case "OUTGOING":
         return isOutgoing;
       case "FLAGGED":
-        return tx.status === "FLAGGED" || tx.status === "FLAG";
+        return tx.status === "FLAGGED";
       case "ALL":
       default:
         return true;
@@ -274,114 +326,190 @@ function DashboardPage() {
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg space-y-6">
-      <header>
-        <h1 className="text-xl font-semibold mb-1 text-slate-100">
-          Welcome{user ? `, ${user.fullName}` : ""} 👋
-        </h1>
-        <p className="text-xs text-slate-400">
-          Here you can see your accounts and recent transactions.
-        </p>
+      <header className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-xl font-semibold mb-1 text-slate-100">
+            Welcome{user ? `, ${user.fullName}` : ""} 👋
+          </h1>
+          <p className="text-xs text-slate-400">
+            Here you can see your accounts, recent transactions, and alerts.
+          </p>
+        </div>
       </header>
 
-      {/* Accounts section */}
-      <section>
-        <h2 className="text-sm font-semibold text-slate-200 mb-2">
-          Your accounts
-        </h2>
+      {/* Accounts + Notifications in a responsive grid */}
+      <section className="grid gap-4 lg:grid-cols-3">
+        {/* Accounts section */}
+        <div className="lg:col-span-2">
+          <h2 className="text-sm font-semibold text-slate-200 mb-2">
+            Your accounts
+          </h2>
 
-        {accountsLoading && (
-          <div className="text-sm text-slate-300">Loading accounts...</div>
-        )}
+          {accountsLoading && (
+            <div className="text-sm text-slate-300">Loading accounts...</div>
+          )}
 
-        {accountsError && (
-          <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-2">
-            {accountsError}
-          </div>
-        )}
-
-        {!accountsLoading && !accountsError && accounts.length === 0 && (
-          <div className="text-sm text-slate-300">
-            You don&apos;t have any accounts yet.
-          </div>
-        )}
-
-        {!accountsLoading && !accountsError && accounts.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex gap-2 flex-wrap mb-2">
-              {accounts.map((account) => (
-                <button
-                  key={account.id}
-                  type="button"
-                  onClick={() => setSelectedAccountId(account.id)}
-                  className={`px-3 py-1 rounded-full text-xs border ${
-                    account.id === selectedAccountId
-                      ? "bg-blue-600 border-blue-400 text-white"
-                      : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
-                  }`}
-                >
-                  {account.currency} {account.accountNumber}
-                </button>
-              ))}
+          {accountsError && (
+            <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-2">
+              {accountsError}
             </div>
+          )}
 
-            {selectedAccount && (
-              <div className="border border-slate-700 rounded-lg p-3 flex justify-between items-center bg-slate-900/60">
-                <div>
-                  <div className="text-xs text-slate-400">
-                    Account #{selectedAccount.accountNumber}
+          {!accountsLoading && !accountsError && accounts.length === 0 && (
+            <div className="text-sm text-slate-300">
+              You don&apos;t have any accounts yet.
+            </div>
+          )}
+
+          {!accountsLoading && !accountsError && accounts.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex gap-2 flex-wrap mb-2">
+                {accounts.map((account) => (
+                  <button
+                    key={account.id}
+                    type="button"
+                    onClick={() => setSelectedAccountId(account.id)}
+                    className={`px-3 py-1 rounded-full text-xs border ${
+                      account.id === selectedAccountId
+                        ? "bg-blue-600 border-blue-400 text-white"
+                        : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
+                    }`}
+                  >
+                    {account.currency} {account.accountNumber}
+                  </button>
+                ))}
+              </div>
+
+              {selectedAccount && (
+                <div className="border border-slate-700 rounded-lg p-3 flex justify-between items-center bg-slate-900/60">
+                  <div>
+                    <div className="text-xs text-slate-400">
+                      Account #{selectedAccount.accountNumber}
+                    </div>
+                    <div className="text-sm text-slate-200">
+                      {selectedAccount.currency}{" "}
+                      <span className="font-semibold">
+                        {selectedAccount.balance.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-400 mt-1">
+                      Status:{" "}
+                      <span
+                        className={
+                          selectedAccount.status === "ACTIVE"
+                            ? "text-green-400"
+                            : selectedAccount.status === "FROZEN"
+                            ? "text-yellow-400"
+                            : "text-red-400"
+                        }
+                      >
+                        {selectedAccount.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-sm text-slate-200">
-                    {selectedAccount.currency}{" "}
-                    <span className="font-semibold">
-                      {selectedAccount.balance.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-400 mt-1">
-                    Status:{" "}
-                    <span
-                      className={
-                        selectedAccount.status === "ACTIVE"
-                          ? "text-green-400"
-                          : selectedAccount.status === "FROZEN"
-                          ? "text-yellow-400"
-                          : "text-red-400"
-                      }
-                    >
-                      {selectedAccount.status}
-                    </span>
+                  <div className="text-xs text-slate-500 text-right">
+                    <div>
+                      Created:{" "}
+                      {new Date(selectedAccount.createdAt).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
+                    </div>
+                    <div>
+                      Updated:{" "}
+                      {new Date(selectedAccount.updatedAt).toLocaleDateString(
+                        undefined,
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="text-xs text-slate-500 text-right">
-                  <div>
-                    Created:{" "}
-                    {new Date(selectedAccount.createdAt).toLocaleDateString(
-                      undefined,
-                      {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      }
-                    )}
-                  </div>
-                  <div>
-                    Updated:{" "}
-                    {new Date(selectedAccount.updatedAt).toLocaleDateString(
-                      undefined,
-                      {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      }
-                    )}
-                  </div>
-                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Notifications panel */}
+        <div className="bg-slate-900 border border-slate-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm font-semibold text-slate-200">
+              Notifications
+            </h2>
+          </div>
+
+          {notificationsLoading && (
+            <div className="text-xs text-slate-300">Loading notifications...</div>
+          )}
+
+          {notificationsError && (
+            <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-2">
+              {notificationsError}
+            </div>
+          )}
+
+          {!notificationsLoading &&
+            !notificationsError &&
+            notifications.length === 0 && (
+              <div className="text-xs text-slate-400">
+                No notifications yet.
               </div>
             )}
-          </div>
-        )}
+
+          {!notificationsLoading &&
+            !notificationsError &&
+            notifications.length > 0 && (
+              <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                {notifications.map((n) => {
+                  const typeColor =
+                    n.type === "FRAUD_ALERT"
+                      ? "border-amber-500/60 bg-amber-950/30"
+                      : n.type === "TRANSACTION"
+                      ? "border-emerald-500/60 bg-emerald-950/30"
+                      : "border-slate-600 bg-slate-950/40";
+
+                  return (
+                    <div
+                      key={n.id}
+                      className={`border rounded-md px-3 py-2 text-xs text-slate-100 ${typeColor}`}
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold">{n.title}</span>
+                        <span className="text-[10px] text-slate-300">
+                          {new Date(n.createdAt).toLocaleString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-200">
+                        {n.message}
+                      </div>
+                      <div className="mt-1 text-[10px] text-slate-400">
+                        {n.type === "FRAUD_ALERT"
+                          ? "Fraud alert"
+                          : n.type === "TRANSACTION"
+                          ? "Transaction"
+                          : "System"}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+        </div>
       </section>
 
       {/* New Transfer section */}
@@ -462,7 +590,7 @@ function DashboardPage() {
           {/* Reference */}
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1">
-              Reference (optional)
+              Reference (optional)"
             </label>
             <input
               type="text"

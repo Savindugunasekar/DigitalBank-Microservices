@@ -1,9 +1,11 @@
 import axios from "axios";
-import type { User, Account, Transaction } from "./types";
+import type { User, Account, Transaction, Notification } from "./types";
 
 const AUTH_BASE_URL = "http://localhost:4001";
 const ACCOUNT_BASE_URL = "http://localhost:4002";
 const TRANSACTION_BASE_URL = "http://localhost:4003";
+export const NOTIFICATION_BASE_URL = "http://localhost:4005";
+
 
 export interface LoginResponse {
   token: string;
@@ -93,4 +95,19 @@ export async function createTransaction(
   );
 
   return res.data as CreateTransactionResponse;
+}
+export interface GetMyNotificationsResponse {
+  notifications: Notification[];
+}
+
+export async function getMyNotifications(
+  token: string
+): Promise<GetMyNotificationsResponse> {
+  const res = await axios.get(`${NOTIFICATION_BASE_URL}/notifications/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data as GetMyNotificationsResponse;
 }

@@ -45,6 +45,25 @@ async function callFraudService(params: {
 }
 
 // ----------------------------------------------
+// Notification service helper
+// ----------------------------------------------
+
+async function sendNotification(payload: {
+  userId: string;
+  type: "TRANSACTION" | "FRAUD_ALERT" | "SYSTEM";
+  title: string;
+  message: string;
+}) {
+  try {
+    await axios.post("http://localhost:4005/notifications", payload, {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("Failed to send notification:", err);
+  }
+}
+
+// ----------------------------------------------
 // POST /transactions
 // ----------------------------------------------
 
@@ -152,6 +171,18 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
         },
       });
 
+      // Send fraud alert notification to the user
+      if (req.user?.userId) {
+        void sendNotification({
+          userId: req.user.userId,
+          type: "FRAUD_ALERT",
+          title: "Transaction flagged for review",
+          message: `A transaction of LKR ${numericAmount.toFixed(
+            2
+          )} to account ${toAccountId} was flagged for manual review.`,
+        });
+      }
+
       return res.status(202).json({
         message: "Transaction flagged for manual review",
         fraud: { decision, score, reasons },
@@ -207,6 +238,18 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
       },
     });
 
+    // Send transaction notification to the user
+    if (req.user?.userId) {
+      void sendNotification({
+        userId: req.user.userId,
+        type: "TRANSACTION",
+        title: "Transfer successful",
+        message: `You sent LKR ${numericAmount.toFixed(
+          2
+        )} to account ${toAccountId}.`,
+      });
+    }
+
     return res.status(201).json({
       transaction: tx,
       fraud: { decision, score, reasons },
@@ -230,10 +273,7 @@ router.get(
 
       const txs = await prisma.transaction.findMany({
         where: {
-          OR: [
-            { fromAccountId: accountId },
-            { toAccountId: accountId },
-          ],
+          OR: [{ fromAccountId: accountId }, { toAccountId: accountId }],
         },
         orderBy: { createdAt: "desc" },
       });
@@ -308,8 +348,6 @@ router.post(
           {
             headers: {
               Authorization: authHeader,
-              // For simplicity, we're not passing user auth here,
-              // Assumption: admin action is trusted inside the backend.
               "Content-Type": "application/json",
             },
           }
@@ -391,8 +429,5 @@ router.post(
     }
   }
 );
-
-
-
 
 export default router;
