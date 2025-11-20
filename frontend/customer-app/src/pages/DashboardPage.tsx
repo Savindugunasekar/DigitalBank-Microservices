@@ -1,7 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import type { Account, Transaction } from "../types";
 import { useAuth } from "../auth";
-import { getMyAccounts, getTransactionsForAccount } from "../api";
+import {
+  getMyAccounts,
+  getTransactionsForAccount,
+  createTransaction,
+} from "../api";
+
+// Helper to style transaction status chip
+function getStatusClasses(status: Transaction["status"]) {
+  switch (status) {
+    case "EXECUTED":
+      return "bg-emerald-900/60 text-emerald-300 border-emerald-500/60";
+    case "FLAGGED":
+      return "bg-amber-900/60 text-amber-300 border-amber-500/60";
+    case "BLOCKED":
+      return "bg-red-900/60 text-red-300 border-red-500/60";
+    case "PENDING":
+      return "bg-slate-800 text-slate-200 border-slate-500/60";
+    default:
+      return "bg-slate-900 text-slate-300 border-slate-600";
+  }
+}
+
+function formatStatusLabel(status: Transaction["status"]) {
+  switch (status) {
+    case "EXECUTED":
+      return "Executed";
+    case "FLAGGED":
+      return "Flagged";
+    case "BLOCKED":
+      return "Blocked";
+    case "PENDING":
+      return "Pending";
+    default:
+      return status;
+  }
+}
+
+type TxFilter = "ALL" | "INCOMING" | "OUTGOING" | "FLAGGED";
 
 function DashboardPage() {
   const { user, token } = useAuth();
@@ -10,11 +47,130 @@ function DashboardPage() {
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [accountsError, setAccountsError] = useState<string | null>(null);
 
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(
+    null
+  );
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [txLoading, setTxLoading] = useState(false);
   const [txError, setTxError] = useState<string | null>(null);
+
+  // New transfer form state
+  const [toAccountId, setToAccountId] = useState("");
+  const [amount, setAmount] = useState("");
+  const [reference, setReference] = useState("");
+  const [creatingTx, setCreatingTx] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+
+  // Transaction filter state
+  const [txFilter, setTxFilter] = useState<TxFilter>("ALL");
+
+  async function handleCreateTransaction(e: FormEvent) {
+    e.preventDefault();
+    setCreateError(null);
+    setCreateSuccess(null);
+
+    if (!token) {
+      setCreateError("You are not authenticated.");
+      return;
+    }
+
+    if (!selectedAccountId) {
+      setCreateError("Please select a source account first.");
+      return;
+    }
+
+    const amountNumber = Number(amount);
+    if (!amountNumber || amountNumber <= 0) {
+      setCreateError("Please enter a valid amount greater than 0.");
+      return;
+    }
+
+    try {
+      setCreatingTx(true);
+
+      const response = await createTransaction(
+        {
+          fromAccountId: selectedAccountId,
+          toAccountId,
+          amount: amountNumber,
+          reference: reference || undefined,
+          currency: "LKR",
+          isNewRecipient: false,
+        },
+        token!
+      );
+
+      const { fraud } = response;
+      const topReason = fraud.reasons?.[0];
+
+      if (fraud.decision === "ALLOW") {
+        setCreateSuccess(
+          `Transfer executed successfully. (Fraud score: ${fraud.score.toFixed(
+            2
+          )}${topReason ? `, reason: ${topReason}` : ""})`
+        );
+      } else if (fraud.decision === "FLAG" || fraud.decision === "FLAGGED") {
+        setCreateSuccess(
+          `Transfer created but flagged for review. (Fraud score: ${fraud.score.toFixed(
+            2
+          )}${topReason ? `, reason: ${topReason}` : ""})`
+        );
+      } else if (fraud.decision === "BLOCK") {
+        setCreateError(
+          `Transfer blocked by fraud checks: ${
+            topReason || "High risk detected"
+          } (Fraud score: ${fraud.score.toFixed(2)})`
+        );
+        return;
+      }
+
+      // Clear form
+      setToAccountId("");
+      setAmount("");
+      setReference("");
+
+      // Refresh accounts and transactions
+      try {
+        // 1) Refresh accounts to update balances
+        setAccountsLoading(true);
+        const accountsData = await getMyAccounts(token!);
+        setAccounts(accountsData.accounts);
+
+        if (
+          selectedAccountId &&
+          !accountsData.accounts.find((a) => a.id === selectedAccountId)
+        ) {
+          setSelectedAccountId(
+            accountsData.accounts.length > 0 ? accountsData.accounts[0].id : null
+          );
+        }
+
+        // 2) Refresh transactions for the selected account
+        if (selectedAccountId) {
+          setTxLoading(true);
+          const { transactions } = await getTransactionsForAccount(
+            selectedAccountId,
+            token!
+          );
+          setTransactions(transactions);
+        }
+      } finally {
+        setAccountsLoading(false);
+        setTxLoading(false);
+      }
+    } catch (err: any) {
+      console.error(err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to create transaction.";
+      setCreateError(msg);
+    } finally {
+      setCreatingTx(false);
+    }
+  }
 
   // Fetch accounts on mount / when token changes
   useEffect(() => {
@@ -90,7 +246,31 @@ function DashboardPage() {
     void fetchTransactions();
   }, [token, selectedAccountId]);
 
-  const selectedAccount = accounts.find((a) => a.id === selectedAccountId) ?? null;
+  const selectedAccount =
+    accounts.find((a) => a.id === selectedAccountId) ?? null;
+
+  // Apply transaction filter
+  const filteredTransactions = transactions.filter((tx) => {
+    if (!selectedAccountId) return false;
+
+    const isOutgoing = tx.fromAccountId === selectedAccountId;
+    const isIncoming = tx.toAccountId === selectedAccountId;
+
+    switch (txFilter) {
+      case "INCOMING":
+        return isIncoming && !isOutgoing;
+      case "OUTGOING":
+        return isOutgoing;
+      case "FLAGGED":
+        return tx.status === "FLAGGED" || tx.status === "FLAG";
+      case "ALL":
+      default:
+        return true;
+    }
+  });
+
+  const hasAnyTransactions = transactions.length > 0;
+  const hasFilteredTransactions = filteredTransactions.length > 0;
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg space-y-6">
@@ -204,11 +384,139 @@ function DashboardPage() {
         )}
       </section>
 
+      {/* New Transfer section */}
+      <section className="mt-2 bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 className="text-sm font-semibold text-slate-200 mb-2">
+          New transfer
+        </h2>
+
+        {createError && (
+          <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-2">
+            {createError}
+          </div>
+        )}
+
+        {createSuccess && (
+          <div className="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-700 rounded p-2 mb-2">
+            {createSuccess}
+          </div>
+        )}
+
+        <form onSubmit={handleCreateTransaction} className="space-y-3">
+          {/* From account */}
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              From account
+            </label>
+            <select
+              value={selectedAccountId ?? ""}
+              onChange={(e) => setSelectedAccountId(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100"
+              required
+            >
+              <option value="">Select account</option>
+              {accounts.map((acc) => (
+                <option key={acc.id} value={acc.id}>
+                  {acc.currency} {acc.accountNumber} · Balance:{" "}
+                  {acc.balance.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* To account */}
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              To account ID
+            </label>
+            <input
+              type="text"
+              value={toAccountId}
+              onChange={(e) => setToAccountId(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100"
+              placeholder="Recipient account ID"
+              required
+            />
+          </div>
+
+          {/* Amount */}
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Amount
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100"
+              placeholder="e.g. 1000.00"
+              required
+            />
+          </div>
+
+          {/* Reference */}
+          <div>
+            <label className="block text-xs font-medium text-slate-300 mb-1">
+              Reference (optional)
+            </label>
+            <input
+              type="text"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100"
+              placeholder="Reason for transfer"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={creatingTx}
+            className="inline-flex items-center px-4 py-2 rounded-lg bg-emerald-600 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-60"
+          >
+            {creatingTx ? "Sending..." : "Send money"}
+          </button>
+        </form>
+      </section>
+
       {/* Transactions section */}
       <section>
-        <h2 className="text-sm font-semibold text-slate-200 mb-2">
-          Recent transactions
-        </h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-slate-200">
+            Recent transactions
+          </h2>
+
+          {/* Filter controls */}
+          {selectedAccountId && hasAnyTransactions && (
+            <div className="flex gap-2">
+              {(
+                [
+                  ["ALL", "All"],
+                  ["INCOMING", "Incoming"],
+                  ["OUTGOING", "Outgoing"],
+                  ["FLAGGED", "Flagged"],
+                ] as [TxFilter, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setTxFilter(value)}
+                  className={`px-2 py-0.5 rounded-full text-[10px] border ${
+                    txFilter === value
+                      ? "bg-blue-600 border-blue-400 text-white"
+                      : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {!selectedAccountId && (
           <div className="text-sm text-slate-300">
@@ -231,7 +539,7 @@ function DashboardPage() {
         {selectedAccountId &&
           !txLoading &&
           !txError &&
-          transactions.length === 0 && (
+          !hasAnyTransactions && (
             <div className="text-sm text-slate-300">
               No transactions for this account yet.
             </div>
@@ -240,13 +548,25 @@ function DashboardPage() {
         {selectedAccountId &&
           !txLoading &&
           !txError &&
-          transactions.length > 0 && (
+          hasAnyTransactions &&
+          !hasFilteredTransactions && (
+            <div className="text-sm text-slate-300">
+              No transactions match this filter.
+            </div>
+          )}
+
+        {selectedAccountId &&
+          !txLoading &&
+          !txError &&
+          hasFilteredTransactions && (
             <div className="space-y-2">
-              {transactions.map((tx) => {
+              {filteredTransactions.map((tx) => {
                 const isOutgoing = tx.fromAccountId === selectedAccountId;
                 const directionLabel = isOutgoing ? "Sent" : "Received";
                 const amountSign = isOutgoing ? "-" : "+";
-                const amountColor = isOutgoing ? "text-red-400" : "text-green-400";
+                const amountColor = isOutgoing
+                  ? "text-red-400"
+                  : "text-green-400";
 
                 return (
                   <div
@@ -267,8 +587,14 @@ function DashboardPage() {
                       <div className="text-xs text-slate-400 mt-1">
                         {tx.reference || "No reference"}
                       </div>
-                      <div className="text-[10px] text-slate-500 mt-1">
-                        Status: {tx.status}
+                      <div className="mt-2">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] border ${getStatusClasses(
+                            tx.status
+                          )}`}
+                        >
+                          {formatStatusLabel(tx.status)}
+                        </span>
                       </div>
                     </div>
                     <div className="text-xs text-slate-500 text-right">

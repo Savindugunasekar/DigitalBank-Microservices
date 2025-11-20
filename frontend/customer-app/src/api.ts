@@ -10,6 +10,27 @@ export interface LoginResponse {
   user: User;
 }
 
+export interface CreateTransactionPayload {
+  fromAccountId: string;
+  toAccountId: string;      // recipient account ID
+  amount: number;
+  reference?: string;
+  currency?: string;
+  isNewRecipient?: boolean;
+}
+
+export interface FraudCheckResult {
+  decision: "ALLOW" | "FLAG" | "FLAGGED" | "BLOCK";
+  score: number;
+  reasons: string[];
+}
+
+export interface CreateTransactionResponse {
+  transaction: Transaction;
+  fraud: FraudCheckResult;
+}
+
+
 export async function loginRequest(
   email: string,
   password: string
@@ -54,4 +75,22 @@ export async function getTransactionsForAccount(
   );
 
   return res.data as AccountTransactionsResponse;
+}
+
+
+export async function createTransaction(
+  payload: CreateTransactionPayload,
+  token: string
+): Promise<CreateTransactionResponse> {
+  const res = await axios.post(
+    `${TRANSACTION_BASE_URL}/transactions`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data as CreateTransactionResponse;
 }

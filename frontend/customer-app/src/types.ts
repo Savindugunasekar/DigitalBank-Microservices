@@ -27,6 +27,7 @@ export type TransactionStatus =
   | "APPROVED"
   | "FLAGGED"
   | "EXECUTED"
+  | "BLOCKED"
   | "REJECTED";
 
 export interface Transaction {
