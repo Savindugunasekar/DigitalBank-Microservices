@@ -1,5 +1,5 @@
 import { Router } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma, { Role, KycStatus } from "./prisma";
 import { AuthedRequest, authMiddleware } from "./authMiddleware";
@@ -25,8 +25,7 @@ router.post("/auth/signup", async (req, res) => {
       return res.status(409).json({ message: "Email already registered" });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
-
+    const hashed = bcrypt.hashSync(password, 10);
     const user = await prisma.user.create({
       data: {
         email,
@@ -77,7 +76,7 @@ router.post("/auth/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = bcrypt.compareSync(password, user.password);
 
     if (!isValid) {
       return res.status(401).json({ message: "Invalid credentials" });

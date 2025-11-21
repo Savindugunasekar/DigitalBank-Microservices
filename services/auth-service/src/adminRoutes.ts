@@ -1,7 +1,7 @@
 import { Router } from "express";
 import prisma from "./prisma";
 import { authMiddleware, requireRole, AuthedRequest } from "./authMiddleware";
-import bcrypt from "bcrypt"; 
+import bcrypt from "bcryptjs"; 
 
 const router = Router();
 
@@ -70,7 +70,7 @@ router.post(
         kycStatus && allowedKyc.includes(kycStatus) ? kycStatus : "PENDING";
 
       // hash password
-      const hashed = await bcrypt.hash(password, 10);
+      const hashed = bcrypt.hashSync(password, 10);
 
       const user = await prisma.user.create({
         data: {

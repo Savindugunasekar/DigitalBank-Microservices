@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: digital-bank-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: digital_bank_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d digital_bank_auth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_auth?schema=public"
+      JWT_SECRET: "supersecret_change_me"
+      PORT: "4001"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4001:4001"
+
+  account-service:
+    build:
+      context: ./services/account-service
+      dockerfile: Dockerfile
+    container_name: account-service
+    restart: always
+    environment:
+      # 👇 use the DB name you actually use for account-service
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_account?schema=public"
+      PORT: "4002"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4002:4002"
+
+volumes:
+  pgdata:
