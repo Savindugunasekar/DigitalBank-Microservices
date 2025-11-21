@@ -42,7 +42,6 @@ services:
     container_name: account-service
     restart: always
     environment:
-      # 👇 use the DB name you actually use for account-service
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_account?schema=public"
       PORT: "4002"
     depends_on:
@@ -50,6 +49,53 @@ services:
         condition: service_healthy
     ports:
       - "4002:4002"
+
+  transaction-service:
+    build:
+      context: ./services/transaction-service
+      dockerfile: Dockerfile
+    container_name: transaction-service
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_transaction?schema=public"
+      AUTH_SERVICE_URL: "http://auth-service:4001"
+      ACCOUNT_SERVICE_URL: "http://account-service:4002"
+      FRAUD_SERVICE_URL: "http://fraud-service:4004" # we'll add fraud-service next
+      PORT: "4003"
+    depends_on:
+      - auth-service
+      - account-service
+      - db
+      - fraud-service   
+    ports:
+      - "4003:4003"
+  fraud-service:
+    build:
+      context: ./services/fraud-service
+      dockerfile: Dockerfile
+    container_name: fraud-service
+    restart: always
+    environment:
+      PORT: "4004"
+    depends_on:
+      - db
+    ports:
+      - "4004:4004"
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_notification?schema=public"
+      PORT: "4005"
+    depends_on:
+      - db
+    ports:
+      - "4005:4005"
+
 
 volumes:
   pgdata:
