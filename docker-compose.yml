@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: digital_bank_auth
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -43,6 +43,7 @@ services:
     restart: always
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_account?schema=public"
+      JWT_SECRET: "supersecret_change_me"
       PORT: "4002"
     depends_on:
       db:
@@ -60,13 +61,18 @@ services:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_transaction?schema=public"
       AUTH_SERVICE_URL: "http://auth-service:4001"
       ACCOUNT_SERVICE_URL: "http://account-service:4002"
-      FRAUD_SERVICE_URL: "http://fraud-service:4004" # we'll add fraud-service next
+      FRAUD_SERVICE_URL: "http://fraud-service:4004"
+      NOTIFICATION_SERVICE_URL: "http://notification-service:4005"
+      JWT_SECRET: "supersecret_change_me"
+ # we'll add fraud-service next
       PORT: "4003"
     depends_on:
       - auth-service
       - account-service
+      - fraud-service
+      - notification-service
       - db
-      - fraud-service   
+         
     ports:
       - "4003:4003"
   fraud-service:
@@ -77,6 +83,7 @@ services:
     restart: always
     environment:
       PORT: "4004"
+      JWT_SECRET: "supersecret_change_me"
     depends_on:
       - db
     ports:
@@ -90,6 +97,7 @@ services:
     restart: always
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_notification?schema=public"
+      JWT_SECRET: "supersecret_change_me"
       PORT: "4005"
     depends_on:
       - db

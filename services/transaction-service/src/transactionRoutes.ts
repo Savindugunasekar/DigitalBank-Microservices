@@ -2,6 +2,8 @@ import { Router } from "express";
 import prisma, { TransactionStatus } from "./prisma";
 import { AuthedRequest, authMiddleware, requireRole } from "./authMiddleware";
 import axios from "axios";
+import { ACCOUNT_SERVICE_URL, FRAUD_SERVICE_URL, NOTIFICATION_SERVICE_URL } from "./config";
+
 
 const router = Router();
 
@@ -35,7 +37,7 @@ async function callFraudService(params: {
     isNewRecipient: isNewRecipient ?? false,
   };
 
-  const response = await axios.post("http://localhost:4004/fraud/check", payload, {
+  const response = await axios.post(`${FRAUD_SERVICE_URL}/fraud/check`, payload, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -55,7 +57,7 @@ async function sendNotification(payload: {
   message: string;
 }) {
   try {
-    await axios.post("http://localhost:4005/notifications", payload, {
+    await axios.post(`${NOTIFICATION_SERVICE_URL}/notifications`, payload, {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
@@ -103,7 +105,7 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
     // 1) Validate that fromAccount exists & belongs to user
     // ---------------------------------------------------------
     try {
-      await axios.get(`http://localhost:4002/accounts/${fromAccountId}`, {
+      await axios.get(`${ACCOUNT_SERVICE_URL}/accounts/${fromAccountId}`, {
         headers: { Authorization: authHeader },
       });
       // If this succeeds → Account exists and belongs to user/admin
@@ -196,7 +198,7 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
 
     try {
       await axios.post(
-        "http://localhost:4002/accounts/internal-transfer",
+        `${ACCOUNT_SERVICE_URL}/accounts/internal-transfer`,
         {
           fromAccountId,
           toAccountId,
@@ -339,7 +341,7 @@ router.post(
       try {
         const authHeader = req.headers["authorization"] || "";
         await axios.post(
-          "http://localhost:4002/accounts/internal-transfer",
+           `${ACCOUNT_SERVICE_URL}/accounts/internal-transfer`,
           {
             fromAccountId: tx.fromAccountId,
             toAccountId: tx.toAccountId,
