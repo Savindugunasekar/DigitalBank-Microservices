@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: digital-bank-api
+  namespace: digital-bank
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localhost
+      http:
+        paths:
+          # AUTH SERVICE
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 4001
+
+          # ACCOUNT SERVICE
+          - path: /accounts
+            pathType: Prefix
+            backend:
+              service:
+                name: account-service
+                port:
+                  number: 4002
+
+          # TRANSACTION SERVICE
+          - path: /transactions
+            pathType: Prefix
+            backend:
+              service:
+                name: transaction-service
+                port:
+                  number: 4003
+
+          # NOTIFICATION SERVICE
+          - path: /notifications
+            pathType: Prefix
+            backend:
+              service:
+                name: notification-service
+                port:
+                  number: 4005
