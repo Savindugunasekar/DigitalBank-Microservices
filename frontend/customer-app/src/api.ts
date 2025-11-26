@@ -7,9 +7,13 @@ const TRANSACTION_BASE_URL = "http://localhost";
 export const NOTIFICATION_BASE_URL = "http://localhost";
 
 
+export type AccountType = "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT";
+
 export interface CreateAccountPayload {
   currency?: string;
+  type?: AccountType;
 }
+
 export interface LoginResponse {
   token: string;
   user: User;

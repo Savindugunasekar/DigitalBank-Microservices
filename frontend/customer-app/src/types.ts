@@ -1,3 +1,5 @@
+import type { AccountType } from "./api";
+
 export type Role = "CUSTOMER" | "ADMIN" | "RISK_OFFICER";
 
 export interface User {
@@ -18,6 +20,7 @@ export interface Account {
   currency: string;
   balance: number;
   status: AccountStatus;
+  type:AccountType;
   createdAt: string;
   updatedAt: string;
 }

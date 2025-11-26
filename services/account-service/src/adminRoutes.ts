@@ -69,6 +69,7 @@ router.patch(
           currency: true,
           balance: true,
           status: true,
+          type: true,
           createdAt: true,
           updatedAt: true,
         },

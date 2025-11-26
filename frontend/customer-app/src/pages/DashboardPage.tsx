@@ -78,6 +78,11 @@ function DashboardPage() {
   const [createAccountError, setCreateAccountError] = useState<string | null>(
     null
   );
+  const [newAccountType, setNewAccountType] = useState<
+    "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT"
+  >("SAVINGS");
+
+
   async function handleOpenAccount() {
     if (!token) {
       setCreateAccountError("You must be logged in to open an account.");
@@ -89,7 +94,7 @@ function DashboardPage() {
       setCreateAccountError(null);
 
       // For now, we create a default LKR account
-      const { account } = await createAccount({ currency: "LKR" }, token);
+      const { account } = await createAccount({ currency: "LKR", type: newAccountType }, token);
 
       // Refresh account list
       setAccounts((prev) => [...prev, account]);
@@ -159,8 +164,7 @@ function DashboardPage() {
         );
       } else if (fraud.decision === "BLOCK") {
         setCreateError(
-          `Transfer blocked by fraud checks: ${
-            topReason || "High risk detected"
+          `Transfer blocked by fraud checks: ${topReason || "High risk detected"
           } (Fraud score: ${fraud.score.toFixed(2)})`
         );
         return;
@@ -393,9 +397,26 @@ function DashboardPage() {
                 You don&apos;t have any accounts yet
               </h3>
               <p className="text-xs text-slate-400 mb-3">
-                Open your first LKR current account to start receiving and
-                sending money.
+                Open your first LKR account to start receiving and sending money.
               </p>
+
+              {/* Choose account type */}
+              <div className="mb-3">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Account type
+                </label>
+                <select
+                  value={newAccountType}
+                  onChange={(e) =>
+                    setNewAccountType(e.target.value as "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT")
+                  }
+                  className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-100"
+                >
+                  <option value="SAVINGS">Savings account</option>
+                  <option value="CURRENT">Current account</option>
+                  <option value="FIXED_DEPOSIT">Fixed deposit</option>
+                </select>
+              </div>
 
               {createAccountError && (
                 <div className="text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2 mb-3">
@@ -414,6 +435,7 @@ function DashboardPage() {
             </div>
           )}
 
+
           {!accountsLoading && !accountsError && accounts.length > 0 && (
             <div className="space-y-3">
               <div className="flex gap-2 flex-wrap mb-2">
@@ -422,13 +444,14 @@ function DashboardPage() {
                     key={account.id}
                     type="button"
                     onClick={() => setSelectedAccountId(account.id)}
-                    className={`px-3 py-1 rounded-full text-xs border ${
-                      account.id === selectedAccountId
-                        ? "bg-blue-600 border-blue-400 text-white"
-                        : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-xs border ${account.id === selectedAccountId
+                      ? "bg-blue-600 border-blue-400 text-white"
+                      : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
+                      }`}
                   >
+                    {/* Optional: show type too */}
                     {account.currency} {account.accountNumber}
+                    {account.type ? ` · ${account.type}` : ""}
                   </button>
                 ))}
               </div>
@@ -455,8 +478,8 @@ function DashboardPage() {
                           selectedAccount.status === "ACTIVE"
                             ? "text-green-400"
                             : selectedAccount.status === "FROZEN"
-                            ? "text-yellow-400"
-                            : "text-red-400"
+                              ? "text-yellow-400"
+                              : "text-red-400"
                         }
                       >
                         {selectedAccount.status}
@@ -489,8 +512,54 @@ function DashboardPage() {
                   </div>
                 </div>
               )}
+
+              <div className="mt-2 border border-slate-700 rounded-lg p-3 bg-slate-900/60">
+                <h3 className="text-xs font-semibold text-slate-100 mb-2">
+                  Open another account
+                </h3>
+
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
+                      Account type
+                    </label>
+                    <select
+                      value={newAccountType}
+                      onChange={(e) =>
+                        setNewAccountType(
+                          e.target.value as "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT"
+                        )
+                      }
+                      className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-100"
+                    >
+                      <option value="SAVINGS">Savings account</option>
+                      <option value="CURRENT">Current account</option>
+                      <option value="FIXED_DEPOSIT">Fixed deposit</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => void handleOpenAccount()}
+                    disabled={creatingAccount}
+                    className="inline-flex items-center px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-xs font-medium text-white"
+                  >
+                    {creatingAccount ? "Opening..." : "Open new account"}
+                  </button>
+                </div>
+
+                {createAccountError && (
+                  <div className="mt-2 text-xs text-red-400 bg-red-950/40 border border-red-700 rounded p-2">
+                    {createAccountError}
+                  </div>
+                )}
+              </div>
+
+
             </div>
           )}
+
+
         </div>
 
         {/* Notifications panel */}
@@ -530,8 +599,8 @@ function DashboardPage() {
                     n.type === "FRAUD_ALERT"
                       ? "border-amber-500/60 bg-amber-950/30"
                       : n.type === "TRANSACTION"
-                      ? "border-emerald-500/60 bg-emerald-950/30"
-                      : "border-slate-600 bg-slate-950/40";
+                        ? "border-emerald-500/60 bg-emerald-950/30"
+                        : "border-slate-600 bg-slate-950/40";
 
                   return (
                     <div
@@ -556,8 +625,8 @@ function DashboardPage() {
                         {n.type === "FRAUD_ALERT"
                           ? "Fraud alert"
                           : n.type === "TRANSACTION"
-                          ? "Transaction"
-                          : "System"}
+                            ? "Transaction"
+                            : "System"}
                       </div>
                     </div>
                   );
@@ -688,11 +757,10 @@ function DashboardPage() {
                   key={value}
                   type="button"
                   onClick={() => setTxFilter(value)}
-                  className={`px-2 py-0.5 rounded-full text-[10px] border ${
-                    txFilter === value
-                      ? "bg-blue-600 border-blue-400 text-white"
-                      : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
-                  }`}
+                  className={`px-2 py-0.5 rounded-full text-[10px] border ${txFilter === value
+                    ? "bg-blue-600 border-blue-400 text-white"
+                    : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
+                    }`}
                 >
                   {label}
                 </button>

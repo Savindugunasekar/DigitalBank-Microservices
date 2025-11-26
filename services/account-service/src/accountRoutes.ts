@@ -1,5 +1,5 @@
 import { Router } from "express";
-import prisma, { AccountStatus } from "./prisma";
+import prisma, { AccountStatus, AccountType } from "./prisma";
 import { AuthedRequest, authMiddleware } from "./authMiddleware";
 
 
@@ -21,10 +21,17 @@ router.post("/accounts", authMiddleware, async (req: AuthedRequest, res) => {
 
     const accountNumber = await generateAccountNumber();
 
-    const rawType = (type as string | undefined)?.toUpperCase();
-    const allowedTypes = ["SAVINGS", "CURRENT", "FIXED_DEPOSIT"];
-    const finalType =
-      rawType && allowedTypes.includes(rawType) ? rawType : "SAVINGS";
+    const rawType = type?.toUpperCase() as AccountType | undefined;
+
+    const allowedTypes: AccountType[] = [
+      AccountType.SAVINGS,
+      AccountType.CURRENT,
+      AccountType.FIXED_DEPOSIT,
+    ];
+
+    const finalType: AccountType = allowedTypes.includes(rawType as AccountType)
+      ? (rawType as AccountType)
+      : AccountType.SAVINGS;
 
     const account = await prisma.account.create({
       data: {
@@ -33,7 +40,7 @@ router.post("/accounts", authMiddleware, async (req: AuthedRequest, res) => {
         balance: 0,
         currency: currency || "LKR",
         status: AccountStatus.ACTIVE,
-        type:finalType as any
+        type: finalType
       },
     });
 
