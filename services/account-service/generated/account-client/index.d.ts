@@ -31,11 +31,24 @@ export namespace $Enums {
 
 export type AccountStatus = (typeof AccountStatus)[keyof typeof AccountStatus]
 
+
+export const AccountType: {
+  SAVINGS: 'SAVINGS',
+  CURRENT: 'CURRENT',
+  FIXED_DEPOSIT: 'FIXED_DEPOSIT'
+};
+
+export type AccountType = (typeof AccountType)[keyof typeof AccountType]
+
 }
 
 export type AccountStatus = $Enums.AccountStatus
 
 export const AccountStatus: typeof $Enums.AccountStatus
+
+export type AccountType = $Enums.AccountType
+
+export const AccountType: typeof $Enums.AccountType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -906,6 +919,7 @@ export namespace Prisma {
     balance: Decimal | null
     currency: string | null
     status: $Enums.AccountStatus | null
+    type: $Enums.AccountType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -917,6 +931,7 @@ export namespace Prisma {
     balance: Decimal | null
     currency: string | null
     status: $Enums.AccountStatus | null
+    type: $Enums.AccountType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -928,6 +943,7 @@ export namespace Prisma {
     balance: number
     currency: number
     status: number
+    type: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -949,6 +965,7 @@ export namespace Prisma {
     balance?: true
     currency?: true
     status?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -960,6 +977,7 @@ export namespace Prisma {
     balance?: true
     currency?: true
     status?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -971,6 +989,7 @@ export namespace Prisma {
     balance?: true
     currency?: true
     status?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1069,6 +1088,7 @@ export namespace Prisma {
     balance: Decimal
     currency: string
     status: $Enums.AccountStatus
+    type: $Enums.AccountType
     createdAt: Date
     updatedAt: Date
     _count: AccountCountAggregateOutputType | null
@@ -1099,6 +1119,7 @@ export namespace Prisma {
     balance?: boolean
     currency?: boolean
     status?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["account"]>
@@ -1110,6 +1131,7 @@ export namespace Prisma {
     balance?: boolean
     currency?: boolean
     status?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["account"]>
@@ -1121,6 +1143,7 @@ export namespace Prisma {
     balance?: boolean
     currency?: boolean
     status?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["account"]>
@@ -1132,11 +1155,12 @@ export namespace Prisma {
     balance?: boolean
     currency?: boolean
     status?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountNumber" | "userId" | "balance" | "currency" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["account"]>
+  export type AccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "accountNumber" | "userId" | "balance" | "currency" | "status" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["account"]>
 
   export type $AccountPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Account"
@@ -1148,6 +1172,7 @@ export namespace Prisma {
       balance: Prisma.Decimal
       currency: string
       status: $Enums.AccountStatus
+      type: $Enums.AccountType
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["account"]>
@@ -1579,6 +1604,7 @@ export namespace Prisma {
     readonly balance: FieldRef<"Account", 'Decimal'>
     readonly currency: FieldRef<"Account", 'String'>
     readonly status: FieldRef<"Account", 'AccountStatus'>
+    readonly type: FieldRef<"Account", 'AccountType'>
     readonly createdAt: FieldRef<"Account", 'DateTime'>
     readonly updatedAt: FieldRef<"Account", 'DateTime'>
   }
@@ -1968,6 +1994,7 @@ export namespace Prisma {
     balance: 'balance',
     currency: 'currency',
     status: 'status',
+    type: 'type',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -2039,6 +2066,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AccountType'
+   */
+  export type EnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountType[]'
+   */
+  export type ListEnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -2079,6 +2120,7 @@ export namespace Prisma {
     balance?: DecimalFilter<"Account"> | Decimal | DecimalJsLike | number | string
     currency?: StringFilter<"Account"> | string
     status?: EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
+    type?: EnumAccountTypeFilter<"Account"> | $Enums.AccountType
     createdAt?: DateTimeFilter<"Account"> | Date | string
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }
@@ -2090,6 +2132,7 @@ export namespace Prisma {
     balance?: SortOrder
     currency?: SortOrder
     status?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2104,6 +2147,7 @@ export namespace Prisma {
     balance?: DecimalFilter<"Account"> | Decimal | DecimalJsLike | number | string
     currency?: StringFilter<"Account"> | string
     status?: EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
+    type?: EnumAccountTypeFilter<"Account"> | $Enums.AccountType
     createdAt?: DateTimeFilter<"Account"> | Date | string
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }, "id" | "accountNumber">
@@ -2115,6 +2159,7 @@ export namespace Prisma {
     balance?: SortOrder
     currency?: SortOrder
     status?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: AccountCountOrderByAggregateInput
@@ -2134,6 +2179,7 @@ export namespace Prisma {
     balance?: DecimalWithAggregatesFilter<"Account"> | Decimal | DecimalJsLike | number | string
     currency?: StringWithAggregatesFilter<"Account"> | string
     status?: EnumAccountStatusWithAggregatesFilter<"Account"> | $Enums.AccountStatus
+    type?: EnumAccountTypeWithAggregatesFilter<"Account"> | $Enums.AccountType
     createdAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
   }
@@ -2145,6 +2191,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     currency?: string
     status?: $Enums.AccountStatus
+    type?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2156,6 +2203,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     currency?: string
     status?: $Enums.AccountStatus
+    type?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2167,6 +2215,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+    type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2178,6 +2227,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+    type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2189,6 +2239,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     currency?: string
     status?: $Enums.AccountStatus
+    type?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -2200,6 +2251,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+    type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2211,6 +2263,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     currency?: StringFieldUpdateOperationsInput | string
     status?: EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+    type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2248,6 +2301,13 @@ export namespace Prisma {
     not?: NestedEnumAccountStatusFilter<$PrismaModel> | $Enums.AccountStatus
   }
 
+  export type EnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -2266,6 +2326,7 @@ export namespace Prisma {
     balance?: SortOrder
     currency?: SortOrder
     status?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2281,6 +2342,7 @@ export namespace Prisma {
     balance?: SortOrder
     currency?: SortOrder
     status?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2292,6 +2354,7 @@ export namespace Prisma {
     balance?: SortOrder
     currency?: SortOrder
     status?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -2344,6 +2407,16 @@ export namespace Prisma {
     _max?: NestedEnumAccountStatusFilter<$PrismaModel>
   }
 
+  export type EnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -2372,6 +2445,10 @@ export namespace Prisma {
 
   export type EnumAccountStatusFieldUpdateOperationsInput = {
     set?: $Enums.AccountStatus
+  }
+
+  export type EnumAccountTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AccountType
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -2408,6 +2485,13 @@ export namespace Prisma {
     in?: $Enums.AccountStatus[] | ListEnumAccountStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.AccountStatus[] | ListEnumAccountStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumAccountStatusFilter<$PrismaModel> | $Enums.AccountStatus
+  }
+
+  export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -2473,6 +2557,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAccountStatusFilter<$PrismaModel>
     _max?: NestedEnumAccountStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {

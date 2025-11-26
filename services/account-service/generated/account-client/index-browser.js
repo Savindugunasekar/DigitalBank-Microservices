@@ -128,6 +128,7 @@ exports.Prisma.AccountScalarFieldEnum = {
   balance: 'balance',
   currency: 'currency',
   status: 'status',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -145,6 +146,12 @@ exports.AccountStatus = exports.$Enums.AccountStatus = {
   ACTIVE: 'ACTIVE',
   FROZEN: 'FROZEN',
   CLOSED: 'CLOSED'
+};
+
+exports.AccountType = exports.$Enums.AccountType = {
+  SAVINGS: 'SAVINGS',
+  CURRENT: 'CURRENT',
+  FIXED_DEPOSIT: 'FIXED_DEPOSIT'
 };
 
 exports.Prisma.ModelName = {

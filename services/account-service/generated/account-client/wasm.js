@@ -100,6 +100,7 @@ exports.Prisma.AccountScalarFieldEnum = {
   balance: 'balance',
   currency: 'currency',
   status: 'status',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -117,6 +118,12 @@ exports.AccountStatus = exports.$Enums.AccountStatus = {
   ACTIVE: 'ACTIVE',
   FROZEN: 'FROZEN',
   CLOSED: 'CLOSED'
+};
+
+exports.AccountType = exports.$Enums.AccountType = {
+  SAVINGS: 'SAVINGS',
+  CURRENT: 'CURRENT',
+  FIXED_DEPOSIT: 'FIXED_DEPOSIT'
 };
 
 exports.Prisma.ModelName = {
@@ -169,13 +176,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/account-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AccountStatus {\n  ACTIVE\n  FROZEN\n  CLOSED\n}\n\nmodel Account {\n  id            String        @id @default(cuid())\n  accountNumber String        @unique\n  userId        String\n  balance       Decimal       @default(0)\n  currency      String        @default(\"LKR\")\n  status        AccountStatus @default(ACTIVE)\n  createdAt     DateTime      @default(now())\n  updatedAt     DateTime      @updatedAt\n}\n",
-  "inlineSchemaHash": "d0bd37964e0b5007ba450ecdef20871b2f84030b02c4dd00d3828fde50681fce",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/account-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum AccountStatus {\n  ACTIVE\n  FROZEN\n  CLOSED\n}\n\nenum AccountType {\n  SAVINGS\n  CURRENT\n  FIXED_DEPOSIT\n}\n\nmodel Account {\n  id            String        @id @default(cuid())\n  accountNumber String        @unique\n  userId        String\n  balance       Decimal       @default(0)\n  currency      String        @default(\"LKR\")\n  status        AccountStatus @default(ACTIVE)\n  type          AccountType   @default(SAVINGS)\n  createdAt     DateTime      @default(now())\n  updatedAt     DateTime      @updatedAt\n}\n",
+  "inlineSchemaHash": "7178bccee0e838c19428932efd259ea3271271f285f5101bc087e92ed63f003b",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"balance\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"AccountStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Account\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"accountNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"balance\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"AccountStatus\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"AccountType\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

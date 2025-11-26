@@ -17,9 +17,14 @@ async function generateAccountNumber() {
 router.post("/accounts", authMiddleware, async (req: AuthedRequest, res) => {
   try {
     const userId = req.user!.userId;
-    const { currency } = req.body;
+    const { currency, type } = req.body;
 
     const accountNumber = await generateAccountNumber();
+
+    const rawType = (type as string | undefined)?.toUpperCase();
+    const allowedTypes = ["SAVINGS", "CURRENT", "FIXED_DEPOSIT"];
+    const finalType =
+      rawType && allowedTypes.includes(rawType) ? rawType : "SAVINGS";
 
     const account = await prisma.account.create({
       data: {
@@ -28,6 +33,7 @@ router.post("/accounts", authMiddleware, async (req: AuthedRequest, res) => {
         balance: 0,
         currency: currency || "LKR",
         status: AccountStatus.ACTIVE,
+        type:finalType as any
       },
     });
 
