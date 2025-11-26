@@ -9,7 +9,7 @@ spec:
     - host: localhost
       http:
         paths:
-          # AUTH SERVICE
+          # CUSTOMER-FACING APIs
           - path: /auth
             pathType: Prefix
             backend:
@@ -18,7 +18,6 @@ spec:
                 port:
                   number: 4001
 
-          # ACCOUNT SERVICE
           - path: /accounts
             pathType: Prefix
             backend:
@@ -27,7 +26,6 @@ spec:
                 port:
                   number: 4002
 
-          # TRANSACTION SERVICE
           - path: /transactions
             pathType: Prefix
             backend:
@@ -36,7 +34,6 @@ spec:
                 port:
                   number: 4003
 
-          # NOTIFICATION SERVICE
           - path: /notifications
             pathType: Prefix
             backend:
@@ -44,3 +41,28 @@ spec:
                 name: notification-service
                 port:
                   number: 4005
+
+          # 🔹 ADMIN APIs
+          - path: /admin/users
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 4001
+
+          - path: /admin/accounts
+            pathType: Prefix
+            backend:
+              service:
+                name: account-service
+                port:
+                  number: 4002
+
+          - path: /admin/transactions
+            pathType: Prefix
+            backend:
+              service:
+                name: transaction-service
+                port:
+                  number: 4003
