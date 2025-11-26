@@ -1,0 +1,64 @@
+name: Build & Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          # 🔹 Backend services
+          - name: auth-service
+            image: digital-bank-auth-service
+            context: ./services/auth-service
+
+          - name: account-service
+            image: digital-bank-account-service
+            context: ./services/account-service
+
+          - name: transaction-service
+            image: digital-bank-transaction-service
+            context: ./services/transaction-service
+
+          - name: fraud-service
+            image: digital-bank-fraud-service
+            context: ./services/fraud-service
+
+          - name: notification-service
+            image: digital-bank-notification-service
+            context: ./services/notification-service
+
+          # 🔹 Frontends
+          - name: customer-frontend
+            image: digital-bank-customer-frontend
+            context: ./frontend/customer-app
+
+          - name: admin-frontend
+            image: digital-bank-admin-frontend
+            context: ./frontend/admin-app
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push ${{ matrix.name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
