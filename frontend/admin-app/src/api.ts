@@ -11,9 +11,9 @@ import type {
   KycStatus
 } from "./types";
 
-export const AUTH_BASE_URL = "http://localhost:4001";
-export const TRANSACTION_BASE_URL = "http://localhost:4003";
-export const NOTIFICATION_BASE_URL = "http://localhost:4005";
+export const AUTH_BASE_URL = "http://localhost";
+export const TRANSACTION_BASE_URL = "http://localhost";
+export const NOTIFICATION_BASE_URL = "http://localhost";
 
 // ---------- Auth ----------
 export interface AdminCreateUserPayload {
