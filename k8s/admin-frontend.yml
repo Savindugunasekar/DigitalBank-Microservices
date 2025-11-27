@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: admin-frontend
-          image: digital-bank-admin-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: savindugunasekara/digital-bank-admin-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
 ---

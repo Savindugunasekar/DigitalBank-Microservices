@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: fraud-service
-          image: digital-banking-platform-fraud-service:latest
-          imagePullPolicy: IfNotPresent
+          image: savindugunasekara/digital-bank-fraud-service:latest
+          imagePullPolicy: Always
           env:
             - name: PORT
               value: "4004"

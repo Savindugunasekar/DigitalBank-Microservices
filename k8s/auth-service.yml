@@ -30,8 +30,8 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: digital-banking-platform-auth-service:latest
-          imagePullPolicy: IfNotPresent
+          image: savindugunasekara/digital-bank-auth-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 4001
           env:

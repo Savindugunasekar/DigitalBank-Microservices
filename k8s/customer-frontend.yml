@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: customer-frontend
-          image: digital-bank-customer-frontend:latest
-          imagePullPolicy: IfNotPresent
+          image: savindugunasekara/digital-bank-customer-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
 ---

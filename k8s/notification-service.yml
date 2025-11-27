@@ -15,13 +15,13 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: digital-banking-platform-notification-service:latest
-          imagePullPolicy: IfNotPresent
+          image: savindugunasekara/digital-bank-notification-service:latest
+          imagePullPolicy: Always
           env:
             - name: PORT
               value: "4005"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@db:5432/digital_bank_notification?schema=public"
+              value: "postgresql://postgres:postgres@postgres.digital-bank.svc.cluster.local:5432/digital_bank_notification?schema=public"
             - name: JWT_SECRET
               value: "supersecret_change_me"
           ports:
