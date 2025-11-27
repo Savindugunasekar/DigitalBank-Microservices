@@ -1,4 +1,3 @@
-// frontend/admin-app/src/pages/AdminUsersPage.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth";
 import type { User, Role, KycStatus } from "../types";
@@ -179,6 +178,9 @@ function AdminUsersPage() {
             <p className="text-[10px] text-slate-400 mb-0.5">Pending</p>
             <p className="text-lg font-semibold text-amber-300">
               {pendingCount}
+            </p>
+            <p className="text-[10px] text-slate-500 mt-0.5">
+              Rejected: {rejectedCount}
             </p>
           </div>
         </div>

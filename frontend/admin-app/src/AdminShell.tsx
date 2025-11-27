@@ -49,7 +49,7 @@ function AdminShell() {
             <NavLink
               to="/"
               end
-              className={({ isActive }) =>
+              className={({ isActive }: { isActive: boolean }) =>
                 [
                   "flex-1 text-center px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition",
                   isActive
@@ -63,7 +63,7 @@ function AdminShell() {
 
             <NavLink
               to="/users"
-              className={({ isActive }) =>
+              className={({ isActive }: { isActive: boolean }) =>
                 [
                   "flex-1 text-center px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition",
                   isActive
@@ -77,7 +77,7 @@ function AdminShell() {
 
             <NavLink
               to="/accounts"
-              className={({ isActive }) =>
+              className={({ isActive }: { isActive: boolean }) =>
                 [
                   "flex-1 text-center px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition",
                   isActive

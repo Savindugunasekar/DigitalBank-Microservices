@@ -1,4 +1,3 @@
-// frontend/admin-app/src/pages/AdminAccountsPage.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth";
 import type { AdminAccount, AccountStatus } from "../types";
@@ -101,6 +100,9 @@ function AdminAccountsPage() {
             </p>
             <p className="text-lg font-semibold text-slate-50">
               {totalAccounts}
+            </p>
+            <p className="text-[10px] text-slate-500 mt-0.5">
+              Closed: {closedCount}
             </p>
           </div>
           <div className="rounded-xl bg-slate-950/70 border border-emerald-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
