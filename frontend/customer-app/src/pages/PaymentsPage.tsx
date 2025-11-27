@@ -174,7 +174,10 @@ function PaymentsPage() {
         setAccounts(accData.accounts);
 
         if (selectedAccountId) {
-          const txData = await getTransactionsForAccount(selectedAccountId, token);
+          const txData = await getTransactionsForAccount(
+            selectedAccountId,
+            token
+          );
           setRecentTx(txData.transactions.slice(0, 5));
         }
       } catch (err) {
@@ -213,17 +216,28 @@ function PaymentsPage() {
 
         <div className="mt-1 sm:mt-0 rounded-2xl bg-slate-950/70 border border-white/10 px-4 py-3 text-right shadow-inner shadow-slate-900/60">
           <p className="text-[11px] text-slate-400 mb-1">Available balance</p>
-          <p className="text-lg font-semibold text-slate-50">
-            {accounts[0]?.currency ?? "LKR"}{" "}
-            {totalBalance.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Across {accounts.length} account
-            {accounts.length !== 1 ? "s" : ""}
-          </p>
+
+          {accountsLoading ? (
+            <p className="text-xs text-slate-500">Loading accounts…</p>
+          ) : accountsError ? (
+            <p className="text-xs text-red-400 max-w-[220px] text-left">
+              {accountsError}
+            </p>
+          ) : (
+            <>
+              <p className="text-lg font-semibold text-slate-50">
+                {accounts[0]?.currency ?? "LKR"}{" "}
+                {totalBalance.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </p>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Across {accounts.length} account
+                {accounts.length !== 1 ? "s" : ""}
+              </p>
+            </>
+          )}
         </div>
       </section>
 
@@ -280,6 +294,7 @@ function PaymentsPage() {
                 onChange={(e) => setSelectedAccountId(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
+                disabled={accountsLoading || !!accountsError}
               >
                 <option value="">Select source account</option>
                 {accounts.map((acc) => (
@@ -342,7 +357,7 @@ function PaymentsPage() {
 
             <button
               type="submit"
-              disabled={creatingTx}
+              disabled={creatingTx || accountsLoading || !!accountsError}
               className="inline-flex items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-60 px-4 py-2 text-xs font-medium text-white transition"
             >
               {creatingTx ? "Sending..." : "Send money"}

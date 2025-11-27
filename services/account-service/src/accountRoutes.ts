@@ -19,6 +19,13 @@ router.post("/accounts", authMiddleware, async (req: AuthedRequest, res) => {
     const userId = req.user!.userId;
     const { currency, type } = req.body;
 
+    if (req.user?.kycStatus !== "APPROVED") {
+      return res.status(403).json({
+        message:
+          "Your KYC is not approved yet. Please complete verification before opening an account.",
+      });
+    }
+
     const accountNumber = await generateAccountNumber();
 
     const rawType = type?.toUpperCase() as AccountType | undefined;

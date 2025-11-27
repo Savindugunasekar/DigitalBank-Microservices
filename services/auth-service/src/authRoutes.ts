@@ -37,7 +37,7 @@ router.post("/auth/signup", async (req, res) => {
     });
 
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, kycStatus: user.kycStatus },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -83,7 +83,7 @@ router.post("/auth/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, kycStatus: user.kycStatus },
       JWT_SECRET,
       { expiresIn: "1d" }
     );

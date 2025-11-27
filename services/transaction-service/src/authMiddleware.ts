@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 
 export interface JwtPayload {
   userId: string;
-  role: string;
+  role: "CUSTOMER" | "ADMIN";
+  kycStatus?: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface AuthedRequest extends Request {

@@ -1,6 +1,5 @@
 import { Route, Routes, Navigate, Link } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage"; // will become Overview
 import RequireAuth from "./RequireAuth";
 import { useAuth } from "./auth";
 import SignupPage from "./pages/SignupPage";
@@ -12,7 +11,7 @@ import ActivityPage from "./pages/ActivityPage";
 
 
 function App() {
-  const { user, logout } = useAuth();
+  const { user} = useAuth();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
