@@ -51,6 +51,7 @@ router.post("/auth/signup", async (req, res) => {
         role: user.role,
         kycStatus: user.kycStatus,
         createdAt: user.createdAt,
+        hasSubmittedKyc:false
       },
     });
   } catch (err) {
@@ -82,6 +83,11 @@ router.post("/auth/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    const hasSubmittedKyc =
+  (await prisma.kycApplication.count({
+    where: { userId: user.id },
+  })) > 0;
+
     const token = jwt.sign(
       { userId: user.id, role: user.role, kycStatus: user.kycStatus },
       JWT_SECRET,
@@ -97,6 +103,7 @@ router.post("/auth/login", async (req, res) => {
         role: user.role,
         kycStatus: user.kycStatus,
         createdAt: user.createdAt,
+        hasSubmittedKyc
       },
     });
   } catch (err) {
@@ -126,7 +133,22 @@ router.get("/auth/me", authMiddleware, async (req: AuthedRequest, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.json({ user });
+      const hasSubmittedKyc =
+    (await prisma.kycApplication.count({
+      where: { userId },
+    })) > 0;
+
+    return res.json({
+    user: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      kycStatus: user.kycStatus,
+      createdAt: user.createdAt,
+      hasSubmittedKyc,
+    },
+  });
   } catch (err) {
     console.error("Me error:", err);
     return res.status(500).json({ message: "Internal server error" });

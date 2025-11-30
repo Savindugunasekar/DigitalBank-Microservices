@@ -1,6 +1,7 @@
 export type Role = "CUSTOMER" | "ADMIN" | "RISK_OFFICER";
 
 export type KycStatus = "PENDING" | "VERIFIED" | "REJECTED";
+export type AccountType = "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT";
 
 
 export interface User {
@@ -61,6 +62,38 @@ export interface AdminAccount {
   currency: string;
   balance: number;
   status: AccountStatus;
+  ownerEmail:string;
+  ownerFullName:string;
+  ownerKycStatus: "PENDING" | "VERIFIED" | "REJECTED"; 
+  type: AccountType;
   createdAt: string;
   updatedAt: string;
+
 }
+
+
+export type KycApplicationStatus =
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "APPROVED"
+  | "REJECTED";
+
+export type KycApplication = {
+  id: string;
+  userId: string;
+  userEmail: string;
+  userFullName: string;
+  userKycStatus: "PENDING" | "VERIFIED" | "REJECTED";
+  nicNumber: string;
+  addressLine1?: string;
+  addressLine2?: string | null;
+  city: string;
+  employmentStatus: string;
+  employerName?: string | null;
+  jobTitle?: string | null;
+  monthlyIncome: string;
+  sourceOfFunds: string;
+  status: KycApplicationStatus;
+  createdAt: string;
+  updatedAt: string;
+};

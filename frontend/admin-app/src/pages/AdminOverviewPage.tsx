@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth";
+import { Link } from "react-router-dom";
+
 import type {
   Transaction,
   TransactionStatsDay,
@@ -171,29 +173,42 @@ function AdminOverviewPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 text-xs">
-          <div className="rounded-xl bg-slate-950/70 border border-amber-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
-            <p className="text-[10px] text-slate-400 mb-0.5">Flagged</p>
-            <p className="text-lg font-semibold text-amber-300">
-              {totalFlagged}
-            </p>
-            <p className="text-[10px] text-slate-500">Last {statsDays} days</p>
+
+        <div className="flex flex-col items-end gap-2">
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            <div className="rounded-xl bg-slate-950/70 border border-amber-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
+              <p className="text-[10px] text-slate-400 mb-0.5">Flagged</p>
+              <p className="text-lg font-semibold text-amber-300">
+                {totalFlagged}
+              </p>
+              <p className="text-[10px] text-slate-500">Last {statsDays} days</p>
+            </div>
+            <div className="rounded-xl bg-slate-950/70 border border-emerald-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
+              <p className="text-[10px] text-slate-400 mb-0.5">Approved</p>
+              <p className="text-lg font-semibold text-emerald-300">
+                {totalExecuted}
+              </p>
+              <p className="text-[10px] text-slate-500">Executed</p>
+            </div>
+            <div className="rounded-xl bg-slate-950/70 border border-rose-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
+              <p className="text-[10px] text-slate-400 mb-0.5">Rejected</p>
+              <p className="text-lg font-semibold text-rose-300">
+                {totalRejected}
+              </p>
+              <p className="text-[10px] text-slate-500">Blocked as high risk</p>
+            </div>
           </div>
-          <div className="rounded-xl bg-slate-950/70 border border-emerald-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
-            <p className="text-[10px] text-slate-400 mb-0.5">Approved</p>
-            <p className="text-lg font-semibold text-emerald-300">
-              {totalExecuted}
-            </p>
-            <p className="text-[10px] text-slate-500">Executed</p>
-          </div>
-          <div className="rounded-xl bg-slate-950/70 border border-rose-400/40 px-3 py-2 text-right shadow-inner shadow-slate-900/60">
-            <p className="text-[10px] text-slate-400 mb-0.5">Rejected</p>
-            <p className="text-lg font-semibold text-rose-300">
-              {totalRejected}
-            </p>
-            <p className="text-[10px] text-slate-500">Blocked as high risk</p>
-          </div>
+
+          {/* KYC shortcut */}
+          <Link
+            to="/kyc"
+            className="inline-flex items-center gap-1 rounded-full border border-blue-400/60 bg-blue-500/10 px-3 py-1 text-[11px] font-medium text-blue-100 hover:bg-blue-500/20 hover:border-blue-300 transition"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+            Review KYC applications
+          </Link>
         </div>
+
       </section>
 
       {/* Main grid: left flagged + right notifications */}
@@ -369,8 +384,8 @@ function AdminOverviewPage() {
                     n.type === "FRAUD_ALERT"
                       ? "border-amber-400/60 bg-amber-500/5"
                       : n.type === "TRANSACTION"
-                      ? "border-emerald-400/60 bg-emerald-500/5"
-                      : "border-slate-500/50 bg-slate-500/5";
+                        ? "border-emerald-400/60 bg-emerald-500/5"
+                        : "border-slate-500/50 bg-slate-500/5";
 
                   return (
                     <div
@@ -397,8 +412,8 @@ function AdminOverviewPage() {
                         {n.type === "FRAUD_ALERT"
                           ? "Fraud alert"
                           : n.type === "TRANSACTION"
-                          ? "Transaction"
-                          : "System"}
+                            ? "Transaction"
+                            : "System"}
                       </div>
                     </div>
                   );
@@ -430,11 +445,10 @@ function AdminOverviewPage() {
                   setStatsDays(d);
                   void loadStats(d);
                 }}
-                className={`px-2 py-0.5 rounded-full border ${
-                  statsDays === d
+                className={`px-2 py-0.5 rounded-full border ${statsDays === d
                     ? "bg-blue-600 border-blue-400 text-white"
                     : "bg-slate-900 border-slate-600 text-slate-200 hover:border-blue-400"
-                }`}
+                  }`}
               >
                 Last {d} days
               </button>

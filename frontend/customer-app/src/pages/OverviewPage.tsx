@@ -81,18 +81,47 @@ function OverviewPage() {
             alerts in one place.
           </p>
           {user && user.kycStatus !== "VERIFIED" && (
-            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-500/5 px-3 py-1">
-              <span className="text-[11px] text-amber-200">
-                Your KYC is not verified yet.
-              </span>
-              <Link
-                to="/kyc"
-                className="text-[11px] font-medium text-amber-300 underline underline-offset-2"
-              >
-                Complete KYC
-              </Link>
-            </div>
-          )}
+  <div className="mt-3 inline-flex items-center gap-3 rounded-xl border border-amber-400/40 bg-amber-500/5 px-4 py-2 shadow-inner shadow-slate-900/40">
+    {/* Status dot */}
+    <span className="h-2 w-2 rounded-full bg-amber-300 animate-pulse" />
+
+    {/* Message */}
+    <span className="text-[12px] text-amber-200">
+      {user.kycStatus === "PENDING" && !user.hasSubmittedKyc &&
+        "Your identity is not verified yet. Complete KYC to open accounts."
+      }
+
+      {user.kycStatus === "PENDING" && user.hasSubmittedKyc &&
+        "Your KYC details have been submitted and are currently under review."
+      }
+
+      {user.kycStatus === "REJECTED" &&
+        "Your KYC was rejected. Please review your details and submit again."
+      }
+    </span>
+
+    {/* CTA buttons */}
+    {user.kycStatus === "PENDING" && !user.hasSubmittedKyc && (
+      <Link
+        to="/kyc"
+        className="text-[11px] font-medium text-amber-300 underline underline-offset-2 hover:text-amber-200 transition"
+      >
+        Complete KYC
+      </Link>
+    )}
+
+    {user.kycStatus === "REJECTED" && (
+      <Link
+        to="/kyc"
+        className="text-[11px] font-medium text-rose-300 underline underline-offset-2 hover:text-rose-200 transition"
+      >
+        Resubmit KYC
+      </Link>
+    )}
+  </div>
+)}
+
+
 
         </div>
 

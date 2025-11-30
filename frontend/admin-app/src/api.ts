@@ -8,16 +8,18 @@ import type {
   AdminAccount,
   Role,
   AccountStatus,
-  KycStatus
+  KycStatus,
+  KycApplicationStatus,
+  KycApplication
 } from "./types";
 
-// export const AUTH_BASE_URL = "http://localhost";
-// export const TRANSACTION_BASE_URL = "http://localhost";
-// export const NOTIFICATION_BASE_URL = "http://localhost";
+export const AUTH_BASE_URL = "http://localhost";
+export const TRANSACTION_BASE_URL = "http://localhost";
+export const NOTIFICATION_BASE_URL = "http://localhost";
 
-export const AUTH_BASE_URL = "http://localhost:4001";
-export const TRANSACTION_BASE_URL = "http://localhost:4003";
-export const NOTIFICATION_BASE_URL = "http://localhost:4005";
+// export const AUTH_BASE_URL = "http://localhost:4001";
+// export const TRANSACTION_BASE_URL = "http://localhost:4003";
+// export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 // ---------- Auth ----------
 export interface AdminCreateUserPayload {
@@ -251,4 +253,46 @@ export async function adminCreateUser(
   );
 
   return res.data.user;
+}
+
+export async function getKycApplications(
+  token: string,
+  status?: KycApplicationStatus
+): Promise<{ applications: KycApplication[] }> {
+  const res = await axios.get<{ applications: KycApplication[] }>(
+    `${AUTH_BASE_URL}/admin/kyc/applications`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+      params: status ? { status } : undefined,
+    }
+  );
+  return res.data;
+}
+
+export async function getKycApplicationById(
+  token: string,
+  id: string
+): Promise<{ application: KycApplication }> {
+  const res = await axios.get<{ application: KycApplication }>(
+    `${AUTH_BASE_URL}/admin/kyc/applications/${id}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return res.data;
+}
+
+export async function decideKycApplication(
+  token: string,
+  id: string,
+  decision: "APPROVE" | "REJECT"
+): Promise<{ message: string }> {
+  const res = await axios.post<{ message: string }>(
+    `${AUTH_BASE_URL}/admin/kyc/applications/${id}/decision`,
+    { decision },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return res.data;
 }

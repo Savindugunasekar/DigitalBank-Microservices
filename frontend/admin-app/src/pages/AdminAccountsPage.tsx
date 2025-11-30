@@ -3,6 +3,31 @@ import { useAuth } from "../auth";
 import type { AdminAccount, AccountStatus } from "../types";
 import { getAdminAccounts, updateAccountStatus } from "../api";
 
+function statusBadgeClasses(status: AccountStatus) {
+  switch (status) {
+    case "ACTIVE":
+      return "bg-emerald-500/10 text-emerald-300 border-emerald-400/60";
+    case "FROZEN":
+      return "bg-amber-500/10 text-amber-300 border-amber-400/60";
+    case "CLOSED":
+      return "bg-rose-500/10 text-rose-300 border-rose-400/60";
+    default:
+      return "bg-slate-500/10 text-slate-200 border-slate-400/60";
+  }
+}
+
+function kycBadgeClasses(status: AdminAccount["ownerKycStatus"]) {
+  switch (status) {
+    case "VERIFIED":
+      return "bg-emerald-500/10 text-emerald-300 border-emerald-400/60";
+    case "REJECTED":
+      return "bg-rose-500/10 text-rose-300 border-rose-400/60";
+    case "PENDING":
+    default:
+      return "bg-amber-500/10 text-amber-200 border-amber-400/60";
+  }
+}
+
 function AdminAccountsPage() {
   const { token } = useAuth();
 
@@ -89,7 +114,8 @@ function AdminAccountsPage() {
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
             Monitor balances across the book and manage account states
-            (ACTIVE, FROZEN, CLOSED) for risk and operations.
+            (ACTIVE, FROZEN, CLOSED) while keeping KYC status in view for
+            compliance.
           </p>
         </div>
 
@@ -139,7 +165,8 @@ function AdminAccountsPage() {
               All accounts
             </h2>
             <p className="text-[11px] text-slate-500">
-              Freeze or close accounts directly from this view when needed.
+              Freeze or close accounts, and always verify owner KYC status
+              before activating.
             </p>
           </div>
           <button
@@ -178,7 +205,13 @@ function AdminAccountsPage() {
                     Account #
                   </th>
                   <th className="px-3 py-2 text-left border-b border-white/10">
-                    Owner (user ID)
+                    Owner
+                  </th>
+                  <th className="px-3 py-2 text-left border-b border-white/10">
+                    KYC status
+                  </th>
+                  <th className="px-3 py-2 text-left border-b border-white/10">
+                    Type
                   </th>
                   <th className="px-3 py-2 text-left border-b border-white/10">
                     Currency
@@ -196,12 +229,8 @@ function AdminAccountsPage() {
               </thead>
               <tbody>
                 {adminAccounts.map((a) => {
-                  const statusColor =
-                    a.status === "ACTIVE"
-                      ? "text-emerald-300"
-                      : a.status === "FROZEN"
-                      ? "text-amber-300"
-                      : "text-rose-300";
+                  const disableActivate =
+                    a.ownerKycStatus !== "VERIFIED" || a.status === "CLOSED";
 
                   return (
                     <tr
@@ -209,32 +238,77 @@ function AdminAccountsPage() {
                       className="odd:bg-slate-950/70 even:bg-slate-900/60"
                     >
                       <td className="px-3 py-2 border-b border-white/5">
-                        <span className="font-mono text-[11px]">
+                        <span className="font-mono text-[11px] text-slate-200">
                           {a.accountNumber}
                         </span>
                       </td>
+
+                      {/* Owner info */}
                       <td className="px-3 py-2 border-b border-white/5">
-                        <span className="font-mono text-[11px]">
-                          {a.userId.slice(0, 8)}…
+                        <div className="flex flex-col">
+                          <span className="text-[11px] text-slate-50">
+                            {a.ownerFullName}
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            {a.ownerEmail}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* KYC badge */}
+                      <td className="px-3 py-2 border-b border-white/5">
+                        <span
+                          className={[
+                            "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium",
+                            kycBadgeClasses(a.ownerKycStatus),
+                          ].join(" ")}
+                        >
+                          {a.ownerKycStatus === "VERIFIED" && "Verified"}
+                          {a.ownerKycStatus === "PENDING" && "Pending"}
+                          {a.ownerKycStatus === "REJECTED" && "Rejected"}
                         </span>
                       </td>
+
+                      {/* Type */}
                       <td className="px-3 py-2 border-b border-white/5">
-                        {a.currency}
+                        <span className="text-[11px] text-slate-200">
+                          {a.type}
+                        </span>
                       </td>
+
+                      {/* Currency */}
+                      <td className="px-3 py-2 border-b border-white/5">
+                        <span className="text-[11px] text-slate-200">
+                          {a.currency}
+                        </span>
+                      </td>
+
+                      {/* Balance */}
                       <td className="px-3 py-2 border-b border-white/5 text-right">
                         {a.balance.toLocaleString(undefined, {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
                       </td>
+
+                      {/* Account status */}
                       <td className="px-3 py-2 border-b border-white/5">
-                        <span className={statusColor}>{a.status}</span>
+                        <span
+                          className={[
+                            "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium",
+                            statusBadgeClasses(a.status),
+                          ].join(" ")}
+                        >
+                          {a.status}
+                        </span>
                       </td>
+
+                      {/* Actions */}
                       <td className="px-3 py-2 border-b border-white/5 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <button
                             type="button"
-                            disabled={accountActionId === a.id}
+                            disabled={accountActionId === a.id || disableActivate}
                             onClick={() =>
                               void handleChangeAccountStatus(a.id, "ACTIVE")
                             }

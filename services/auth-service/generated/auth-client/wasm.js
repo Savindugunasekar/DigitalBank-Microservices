@@ -104,6 +104,23 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.KycApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  nicNumber: 'nicNumber',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  employmentStatus: 'employmentStatus',
+  employerName: 'employerName',
+  jobTitle: 'jobTitle',
+  monthlyIncome: 'monthlyIncome',
+  sourceOfFunds: 'sourceOfFunds',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -112,6 +129,11 @@ exports.Prisma.SortOrder = {
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.Role = exports.$Enums.Role = {
   CUSTOMER: 'CUSTOMER',
@@ -125,8 +147,16 @@ exports.KycStatus = exports.$Enums.KycStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.KycApplicationStatus = exports.$Enums.KycApplicationStatus = {
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  KycApplication: 'KycApplication'
 };
 /**
  * Create the Client
@@ -175,13 +205,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/auth-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  CUSTOMER\n  ADMIN\n  RISK_OFFICER\n}\n\nenum KycStatus {\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\nmodel User {\n  id        String    @id @default(cuid())\n  email     String    @unique\n  password  String\n  fullName  String\n  role      Role      @default(CUSTOMER)\n  kycStatus KycStatus @default(PENDING)\n  createdAt DateTime  @default(now())\n  updatedAt DateTime  @updatedAt\n}\n",
-  "inlineSchemaHash": "ec1ba4932ec08e2322ccc16124670aeffc7e636e7f9de7171f9f8b1a1b83b25b",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/auth-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  CUSTOMER\n  ADMIN\n  RISK_OFFICER\n}\n\nenum KycStatus {\n  PENDING\n  VERIFIED\n  REJECTED\n}\n\nenum KycApplicationStatus {\n  SUBMITTED\n  UNDER_REVIEW\n  APPROVED\n  REJECTED\n}\n\nmodel User {\n  id              String           @id @default(cuid())\n  email           String           @unique\n  password        String\n  fullName        String\n  role            Role             @default(CUSTOMER)\n  kycStatus       KycStatus        @default(PENDING)\n  createdAt       DateTime         @default(now())\n  updatedAt       DateTime         @updatedAt\n  kycApplications KycApplication[]\n}\n\nmodel KycApplication {\n  id     String @id @default(cuid())\n  userId String\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  nicNumber        String\n  addressLine1     String\n  addressLine2     String?\n  city             String\n  employmentStatus String\n  employerName     String?\n  jobTitle         String?\n  monthlyIncome    String\n  sourceOfFunds    String\n\n  status KycApplicationStatus @default(SUBMITTED)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([userId, status])\n}\n",
+  "inlineSchemaHash": "3f3dc6c896a8a826f6853e5b55de6a9e2ff2f2295f3b7dd798b8e26f022f1ca4",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"kycStatus\",\"kind\":\"enum\",\"type\":\"KycStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"kycStatus\",\"kind\":\"enum\",\"type\":\"KycStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"kycApplications\",\"kind\":\"object\",\"type\":\"KycApplication\",\"relationName\":\"KycApplicationToUser\"}],\"dbName\":null},\"KycApplication\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"KycApplicationToUser\"},{\"name\":\"nicNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine1\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"addressLine2\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"employmentStatus\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"employerName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"jobTitle\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"monthlyIncome\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sourceOfFunds\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"KycApplicationStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

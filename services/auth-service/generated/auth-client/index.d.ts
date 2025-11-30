@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
+/**
+ * Model KycApplication
+ * 
+ */
+export type KycApplication = $Result.DefaultSelection<Prisma.$KycApplicationPayload>
 
 /**
  * Enums
@@ -40,6 +45,16 @@ export const KycStatus: {
 
 export type KycStatus = (typeof KycStatus)[keyof typeof KycStatus]
 
+
+export const KycApplicationStatus: {
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+export type KycApplicationStatus = (typeof KycApplicationStatus)[keyof typeof KycApplicationStatus]
+
 }
 
 export type Role = $Enums.Role
@@ -49,6 +64,10 @@ export const Role: typeof $Enums.Role
 export type KycStatus = $Enums.KycStatus
 
 export const KycStatus: typeof $Enums.KycStatus
+
+export type KycApplicationStatus = $Enums.KycApplicationStatus
+
+export const KycApplicationStatus: typeof $Enums.KycApplicationStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -177,6 +196,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.kycApplication`: Exposes CRUD operations for the **KycApplication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KycApplications
+    * const kycApplications = await prisma.kycApplication.findMany()
+    * ```
+    */
+  get kycApplication(): Prisma.KycApplicationDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -618,7 +647,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    User: 'User'
+    User: 'User',
+    KycApplication: 'KycApplication'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -637,7 +667,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user"
+      modelProps: "user" | "kycApplication"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -712,6 +742,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      KycApplication: {
+        payload: Prisma.$KycApplicationPayload<ExtArgs>
+        fields: Prisma.KycApplicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KycApplicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KycApplicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          findFirst: {
+            args: Prisma.KycApplicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KycApplicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          findMany: {
+            args: Prisma.KycApplicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>[]
+          }
+          create: {
+            args: Prisma.KycApplicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          createMany: {
+            args: Prisma.KycApplicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KycApplicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>[]
+          }
+          delete: {
+            args: Prisma.KycApplicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          update: {
+            args: Prisma.KycApplicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.KycApplicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KycApplicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KycApplicationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>[]
+          }
+          upsert: {
+            args: Prisma.KycApplicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KycApplicationPayload>
+          }
+          aggregate: {
+            args: Prisma.KycApplicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKycApplication>
+          }
+          groupBy: {
+            args: Prisma.KycApplicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KycApplicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KycApplicationCountArgs<ExtArgs>
+            result: $Utils.Optional<KycApplicationCountAggregateOutputType> | number
           }
         }
       }
@@ -812,6 +916,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    kycApplication?: KycApplicationOmit
   }
 
   /* Types for Logging */
@@ -886,6 +991,36 @@ export namespace Prisma {
    * Count Types
    */
 
+
+  /**
+   * Count Type UserCountOutputType
+   */
+
+  export type UserCountOutputType = {
+    kycApplications: number
+  }
+
+  export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kycApplications?: boolean | UserCountOutputTypeCountKycApplicationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     */
+    select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountKycApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KycApplicationWhereInput
+  }
 
 
   /**
@@ -1080,6 +1215,8 @@ export namespace Prisma {
     kycStatus?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    kycApplications?: boolean | User$kycApplicationsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1116,10 +1253,18 @@ export namespace Prisma {
   }
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "fullName" | "role" | "kycStatus" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    kycApplications?: boolean | User$kycApplicationsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
-    objects: {}
+    objects: {
+      kycApplications: Prisma.$KycApplicationPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
@@ -1523,6 +1668,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    kycApplications<T extends User$kycApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$kycApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1577,6 +1723,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where: UserWhereUniqueInput
@@ -1595,6 +1745,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where: UserWhereUniqueInput
@@ -1612,6 +1766,10 @@ export namespace Prisma {
      * Omit specific fields from the User
      */
     omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * Filter, which User to fetch.
      */
@@ -1661,6 +1819,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which User to fetch.
      */
     where?: UserWhereInput
@@ -1709,6 +1871,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter, which Users to fetch.
      */
     where?: UserWhereInput
@@ -1751,6 +1917,10 @@ export namespace Prisma {
      * Omit specific fields from the User
      */
     omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * The data needed to create a User.
      */
@@ -1799,6 +1969,10 @@ export namespace Prisma {
      * Omit specific fields from the User
      */
     omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
     /**
      * The data needed to update a User.
      */
@@ -1866,6 +2040,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * The filter to search for the User to update in case it exists.
      */
     where: UserWhereUniqueInput
@@ -1892,6 +2070,10 @@ export namespace Prisma {
      */
     omit?: UserOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    /**
      * Filter which User to delete.
      */
     where: UserWhereUniqueInput
@@ -1912,6 +2094,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.kycApplications
+   */
+  export type User$kycApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    where?: KycApplicationWhereInput
+    orderBy?: KycApplicationOrderByWithRelationInput | KycApplicationOrderByWithRelationInput[]
+    cursor?: KycApplicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: KycApplicationScalarFieldEnum | KycApplicationScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1923,6 +2129,1185 @@ export namespace Prisma {
      * Omit specific fields from the User
      */
     omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KycApplication
+   */
+
+  export type AggregateKycApplication = {
+    _count: KycApplicationCountAggregateOutputType | null
+    _min: KycApplicationMinAggregateOutputType | null
+    _max: KycApplicationMaxAggregateOutputType | null
+  }
+
+  export type KycApplicationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    nicNumber: string | null
+    addressLine1: string | null
+    addressLine2: string | null
+    city: string | null
+    employmentStatus: string | null
+    employerName: string | null
+    jobTitle: string | null
+    monthlyIncome: string | null
+    sourceOfFunds: string | null
+    status: $Enums.KycApplicationStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KycApplicationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    nicNumber: string | null
+    addressLine1: string | null
+    addressLine2: string | null
+    city: string | null
+    employmentStatus: string | null
+    employerName: string | null
+    jobTitle: string | null
+    monthlyIncome: string | null
+    sourceOfFunds: string | null
+    status: $Enums.KycApplicationStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KycApplicationCountAggregateOutputType = {
+    id: number
+    userId: number
+    nicNumber: number
+    addressLine1: number
+    addressLine2: number
+    city: number
+    employmentStatus: number
+    employerName: number
+    jobTitle: number
+    monthlyIncome: number
+    sourceOfFunds: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type KycApplicationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    nicNumber?: true
+    addressLine1?: true
+    addressLine2?: true
+    city?: true
+    employmentStatus?: true
+    employerName?: true
+    jobTitle?: true
+    monthlyIncome?: true
+    sourceOfFunds?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KycApplicationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    nicNumber?: true
+    addressLine1?: true
+    addressLine2?: true
+    city?: true
+    employmentStatus?: true
+    employerName?: true
+    jobTitle?: true
+    monthlyIncome?: true
+    sourceOfFunds?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KycApplicationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    nicNumber?: true
+    addressLine1?: true
+    addressLine2?: true
+    city?: true
+    employmentStatus?: true
+    employerName?: true
+    jobTitle?: true
+    monthlyIncome?: true
+    sourceOfFunds?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type KycApplicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KycApplication to aggregate.
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KycApplications to fetch.
+     */
+    orderBy?: KycApplicationOrderByWithRelationInput | KycApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KycApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KycApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KycApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KycApplications
+    **/
+    _count?: true | KycApplicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KycApplicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KycApplicationMaxAggregateInputType
+  }
+
+  export type GetKycApplicationAggregateType<T extends KycApplicationAggregateArgs> = {
+        [P in keyof T & keyof AggregateKycApplication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKycApplication[P]>
+      : GetScalarType<T[P], AggregateKycApplication[P]>
+  }
+
+
+
+
+  export type KycApplicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KycApplicationWhereInput
+    orderBy?: KycApplicationOrderByWithAggregationInput | KycApplicationOrderByWithAggregationInput[]
+    by: KycApplicationScalarFieldEnum[] | KycApplicationScalarFieldEnum
+    having?: KycApplicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KycApplicationCountAggregateInputType | true
+    _min?: KycApplicationMinAggregateInputType
+    _max?: KycApplicationMaxAggregateInputType
+  }
+
+  export type KycApplicationGroupByOutputType = {
+    id: string
+    userId: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2: string | null
+    city: string
+    employmentStatus: string
+    employerName: string | null
+    jobTitle: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status: $Enums.KycApplicationStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: KycApplicationCountAggregateOutputType | null
+    _min: KycApplicationMinAggregateOutputType | null
+    _max: KycApplicationMaxAggregateOutputType | null
+  }
+
+  type GetKycApplicationGroupByPayload<T extends KycApplicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KycApplicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KycApplicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KycApplicationGroupByOutputType[P]>
+            : GetScalarType<T[P], KycApplicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KycApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    nicNumber?: boolean
+    addressLine1?: boolean
+    addressLine2?: boolean
+    city?: boolean
+    employmentStatus?: boolean
+    employerName?: boolean
+    jobTitle?: boolean
+    monthlyIncome?: boolean
+    sourceOfFunds?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kycApplication"]>
+
+  export type KycApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    nicNumber?: boolean
+    addressLine1?: boolean
+    addressLine2?: boolean
+    city?: boolean
+    employmentStatus?: boolean
+    employerName?: boolean
+    jobTitle?: boolean
+    monthlyIncome?: boolean
+    sourceOfFunds?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kycApplication"]>
+
+  export type KycApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    nicNumber?: boolean
+    addressLine1?: boolean
+    addressLine2?: boolean
+    city?: boolean
+    employmentStatus?: boolean
+    employerName?: boolean
+    jobTitle?: boolean
+    monthlyIncome?: boolean
+    sourceOfFunds?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kycApplication"]>
+
+  export type KycApplicationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    nicNumber?: boolean
+    addressLine1?: boolean
+    addressLine2?: boolean
+    city?: boolean
+    employmentStatus?: boolean
+    employerName?: boolean
+    jobTitle?: boolean
+    monthlyIncome?: boolean
+    sourceOfFunds?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type KycApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "nicNumber" | "addressLine1" | "addressLine2" | "city" | "employmentStatus" | "employerName" | "jobTitle" | "monthlyIncome" | "sourceOfFunds" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["kycApplication"]>
+  export type KycApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type KycApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type KycApplicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $KycApplicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KycApplication"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      nicNumber: string
+      addressLine1: string
+      addressLine2: string | null
+      city: string
+      employmentStatus: string
+      employerName: string | null
+      jobTitle: string | null
+      monthlyIncome: string
+      sourceOfFunds: string
+      status: $Enums.KycApplicationStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["kycApplication"]>
+    composites: {}
+  }
+
+  type KycApplicationGetPayload<S extends boolean | null | undefined | KycApplicationDefaultArgs> = $Result.GetResult<Prisma.$KycApplicationPayload, S>
+
+  type KycApplicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KycApplicationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KycApplicationCountAggregateInputType | true
+    }
+
+  export interface KycApplicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KycApplication'], meta: { name: 'KycApplication' } }
+    /**
+     * Find zero or one KycApplication that matches the filter.
+     * @param {KycApplicationFindUniqueArgs} args - Arguments to find a KycApplication
+     * @example
+     * // Get one KycApplication
+     * const kycApplication = await prisma.kycApplication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KycApplicationFindUniqueArgs>(args: SelectSubset<T, KycApplicationFindUniqueArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KycApplication that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KycApplicationFindUniqueOrThrowArgs} args - Arguments to find a KycApplication
+     * @example
+     * // Get one KycApplication
+     * const kycApplication = await prisma.kycApplication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KycApplicationFindUniqueOrThrowArgs>(args: SelectSubset<T, KycApplicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KycApplication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationFindFirstArgs} args - Arguments to find a KycApplication
+     * @example
+     * // Get one KycApplication
+     * const kycApplication = await prisma.kycApplication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KycApplicationFindFirstArgs>(args?: SelectSubset<T, KycApplicationFindFirstArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KycApplication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationFindFirstOrThrowArgs} args - Arguments to find a KycApplication
+     * @example
+     * // Get one KycApplication
+     * const kycApplication = await prisma.kycApplication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KycApplicationFindFirstOrThrowArgs>(args?: SelectSubset<T, KycApplicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KycApplications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KycApplications
+     * const kycApplications = await prisma.kycApplication.findMany()
+     * 
+     * // Get first 10 KycApplications
+     * const kycApplications = await prisma.kycApplication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kycApplicationWithIdOnly = await prisma.kycApplication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KycApplicationFindManyArgs>(args?: SelectSubset<T, KycApplicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KycApplication.
+     * @param {KycApplicationCreateArgs} args - Arguments to create a KycApplication.
+     * @example
+     * // Create one KycApplication
+     * const KycApplication = await prisma.kycApplication.create({
+     *   data: {
+     *     // ... data to create a KycApplication
+     *   }
+     * })
+     * 
+     */
+    create<T extends KycApplicationCreateArgs>(args: SelectSubset<T, KycApplicationCreateArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KycApplications.
+     * @param {KycApplicationCreateManyArgs} args - Arguments to create many KycApplications.
+     * @example
+     * // Create many KycApplications
+     * const kycApplication = await prisma.kycApplication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KycApplicationCreateManyArgs>(args?: SelectSubset<T, KycApplicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KycApplications and returns the data saved in the database.
+     * @param {KycApplicationCreateManyAndReturnArgs} args - Arguments to create many KycApplications.
+     * @example
+     * // Create many KycApplications
+     * const kycApplication = await prisma.kycApplication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KycApplications and only return the `id`
+     * const kycApplicationWithIdOnly = await prisma.kycApplication.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KycApplicationCreateManyAndReturnArgs>(args?: SelectSubset<T, KycApplicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KycApplication.
+     * @param {KycApplicationDeleteArgs} args - Arguments to delete one KycApplication.
+     * @example
+     * // Delete one KycApplication
+     * const KycApplication = await prisma.kycApplication.delete({
+     *   where: {
+     *     // ... filter to delete one KycApplication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KycApplicationDeleteArgs>(args: SelectSubset<T, KycApplicationDeleteArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KycApplication.
+     * @param {KycApplicationUpdateArgs} args - Arguments to update one KycApplication.
+     * @example
+     * // Update one KycApplication
+     * const kycApplication = await prisma.kycApplication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KycApplicationUpdateArgs>(args: SelectSubset<T, KycApplicationUpdateArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KycApplications.
+     * @param {KycApplicationDeleteManyArgs} args - Arguments to filter KycApplications to delete.
+     * @example
+     * // Delete a few KycApplications
+     * const { count } = await prisma.kycApplication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KycApplicationDeleteManyArgs>(args?: SelectSubset<T, KycApplicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KycApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KycApplications
+     * const kycApplication = await prisma.kycApplication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KycApplicationUpdateManyArgs>(args: SelectSubset<T, KycApplicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KycApplications and returns the data updated in the database.
+     * @param {KycApplicationUpdateManyAndReturnArgs} args - Arguments to update many KycApplications.
+     * @example
+     * // Update many KycApplications
+     * const kycApplication = await prisma.kycApplication.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KycApplications and only return the `id`
+     * const kycApplicationWithIdOnly = await prisma.kycApplication.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KycApplicationUpdateManyAndReturnArgs>(args: SelectSubset<T, KycApplicationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KycApplication.
+     * @param {KycApplicationUpsertArgs} args - Arguments to update or create a KycApplication.
+     * @example
+     * // Update or create a KycApplication
+     * const kycApplication = await prisma.kycApplication.upsert({
+     *   create: {
+     *     // ... data to create a KycApplication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KycApplication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KycApplicationUpsertArgs>(args: SelectSubset<T, KycApplicationUpsertArgs<ExtArgs>>): Prisma__KycApplicationClient<$Result.GetResult<Prisma.$KycApplicationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KycApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationCountArgs} args - Arguments to filter KycApplications to count.
+     * @example
+     * // Count the number of KycApplications
+     * const count = await prisma.kycApplication.count({
+     *   where: {
+     *     // ... the filter for the KycApplications we want to count
+     *   }
+     * })
+    **/
+    count<T extends KycApplicationCountArgs>(
+      args?: Subset<T, KycApplicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KycApplicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KycApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KycApplicationAggregateArgs>(args: Subset<T, KycApplicationAggregateArgs>): Prisma.PrismaPromise<GetKycApplicationAggregateType<T>>
+
+    /**
+     * Group by KycApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KycApplicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KycApplicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KycApplicationGroupByArgs['orderBy'] }
+        : { orderBy?: KycApplicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KycApplicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKycApplicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KycApplication model
+   */
+  readonly fields: KycApplicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KycApplication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KycApplicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KycApplication model
+   */
+  interface KycApplicationFieldRefs {
+    readonly id: FieldRef<"KycApplication", 'String'>
+    readonly userId: FieldRef<"KycApplication", 'String'>
+    readonly nicNumber: FieldRef<"KycApplication", 'String'>
+    readonly addressLine1: FieldRef<"KycApplication", 'String'>
+    readonly addressLine2: FieldRef<"KycApplication", 'String'>
+    readonly city: FieldRef<"KycApplication", 'String'>
+    readonly employmentStatus: FieldRef<"KycApplication", 'String'>
+    readonly employerName: FieldRef<"KycApplication", 'String'>
+    readonly jobTitle: FieldRef<"KycApplication", 'String'>
+    readonly monthlyIncome: FieldRef<"KycApplication", 'String'>
+    readonly sourceOfFunds: FieldRef<"KycApplication", 'String'>
+    readonly status: FieldRef<"KycApplication", 'KycApplicationStatus'>
+    readonly createdAt: FieldRef<"KycApplication", 'DateTime'>
+    readonly updatedAt: FieldRef<"KycApplication", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KycApplication findUnique
+   */
+  export type KycApplicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which KycApplication to fetch.
+     */
+    where: KycApplicationWhereUniqueInput
+  }
+
+  /**
+   * KycApplication findUniqueOrThrow
+   */
+  export type KycApplicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which KycApplication to fetch.
+     */
+    where: KycApplicationWhereUniqueInput
+  }
+
+  /**
+   * KycApplication findFirst
+   */
+  export type KycApplicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which KycApplication to fetch.
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KycApplications to fetch.
+     */
+    orderBy?: KycApplicationOrderByWithRelationInput | KycApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KycApplications.
+     */
+    cursor?: KycApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KycApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KycApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KycApplications.
+     */
+    distinct?: KycApplicationScalarFieldEnum | KycApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * KycApplication findFirstOrThrow
+   */
+  export type KycApplicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which KycApplication to fetch.
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KycApplications to fetch.
+     */
+    orderBy?: KycApplicationOrderByWithRelationInput | KycApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KycApplications.
+     */
+    cursor?: KycApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KycApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KycApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KycApplications.
+     */
+    distinct?: KycApplicationScalarFieldEnum | KycApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * KycApplication findMany
+   */
+  export type KycApplicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which KycApplications to fetch.
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KycApplications to fetch.
+     */
+    orderBy?: KycApplicationOrderByWithRelationInput | KycApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KycApplications.
+     */
+    cursor?: KycApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KycApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KycApplications.
+     */
+    skip?: number
+    distinct?: KycApplicationScalarFieldEnum | KycApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * KycApplication create
+   */
+  export type KycApplicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a KycApplication.
+     */
+    data: XOR<KycApplicationCreateInput, KycApplicationUncheckedCreateInput>
+  }
+
+  /**
+   * KycApplication createMany
+   */
+  export type KycApplicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KycApplications.
+     */
+    data: KycApplicationCreateManyInput | KycApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KycApplication createManyAndReturn
+   */
+  export type KycApplicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * The data used to create many KycApplications.
+     */
+    data: KycApplicationCreateManyInput | KycApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KycApplication update
+   */
+  export type KycApplicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a KycApplication.
+     */
+    data: XOR<KycApplicationUpdateInput, KycApplicationUncheckedUpdateInput>
+    /**
+     * Choose, which KycApplication to update.
+     */
+    where: KycApplicationWhereUniqueInput
+  }
+
+  /**
+   * KycApplication updateMany
+   */
+  export type KycApplicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KycApplications.
+     */
+    data: XOR<KycApplicationUpdateManyMutationInput, KycApplicationUncheckedUpdateManyInput>
+    /**
+     * Filter which KycApplications to update
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * Limit how many KycApplications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KycApplication updateManyAndReturn
+   */
+  export type KycApplicationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * The data used to update KycApplications.
+     */
+    data: XOR<KycApplicationUpdateManyMutationInput, KycApplicationUncheckedUpdateManyInput>
+    /**
+     * Filter which KycApplications to update
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * Limit how many KycApplications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KycApplication upsert
+   */
+  export type KycApplicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the KycApplication to update in case it exists.
+     */
+    where: KycApplicationWhereUniqueInput
+    /**
+     * In case the KycApplication found by the `where` argument doesn't exist, create a new KycApplication with this data.
+     */
+    create: XOR<KycApplicationCreateInput, KycApplicationUncheckedCreateInput>
+    /**
+     * In case the KycApplication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KycApplicationUpdateInput, KycApplicationUncheckedUpdateInput>
+  }
+
+  /**
+   * KycApplication delete
+   */
+  export type KycApplicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
+    /**
+     * Filter which KycApplication to delete.
+     */
+    where: KycApplicationWhereUniqueInput
+  }
+
+  /**
+   * KycApplication deleteMany
+   */
+  export type KycApplicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KycApplications to delete
+     */
+    where?: KycApplicationWhereInput
+    /**
+     * Limit how many KycApplications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KycApplication without action
+   */
+  export type KycApplicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KycApplication
+     */
+    select?: KycApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KycApplication
+     */
+    omit?: KycApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KycApplicationInclude<ExtArgs> | null
   }
 
 
@@ -1954,6 +3339,26 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const KycApplicationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    nicNumber: 'nicNumber',
+    addressLine1: 'addressLine1',
+    addressLine2: 'addressLine2',
+    city: 'city',
+    employmentStatus: 'employmentStatus',
+    employerName: 'employerName',
+    jobTitle: 'jobTitle',
+    monthlyIncome: 'monthlyIncome',
+    sourceOfFunds: 'sourceOfFunds',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type KycApplicationScalarFieldEnum = (typeof KycApplicationScalarFieldEnum)[keyof typeof KycApplicationScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -1968,6 +3373,14 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -2032,6 +3445,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'KycApplicationStatus'
+   */
+  export type EnumKycApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KycApplicationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'KycApplicationStatus[]'
+   */
+  export type ListEnumKycApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KycApplicationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -2060,6 +3487,7 @@ export namespace Prisma {
     kycStatus?: EnumKycStatusFilter<"User"> | $Enums.KycStatus
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    kycApplications?: KycApplicationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -2071,6 +3499,7 @@ export namespace Prisma {
     kycStatus?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    kycApplications?: KycApplicationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -2085,6 +3514,7 @@ export namespace Prisma {
     kycStatus?: EnumKycStatusFilter<"User"> | $Enums.KycStatus
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    kycApplications?: KycApplicationListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -2115,6 +3545,106 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
+  export type KycApplicationWhereInput = {
+    AND?: KycApplicationWhereInput | KycApplicationWhereInput[]
+    OR?: KycApplicationWhereInput[]
+    NOT?: KycApplicationWhereInput | KycApplicationWhereInput[]
+    id?: StringFilter<"KycApplication"> | string
+    userId?: StringFilter<"KycApplication"> | string
+    nicNumber?: StringFilter<"KycApplication"> | string
+    addressLine1?: StringFilter<"KycApplication"> | string
+    addressLine2?: StringNullableFilter<"KycApplication"> | string | null
+    city?: StringFilter<"KycApplication"> | string
+    employmentStatus?: StringFilter<"KycApplication"> | string
+    employerName?: StringNullableFilter<"KycApplication"> | string | null
+    jobTitle?: StringNullableFilter<"KycApplication"> | string | null
+    monthlyIncome?: StringFilter<"KycApplication"> | string
+    sourceOfFunds?: StringFilter<"KycApplication"> | string
+    status?: EnumKycApplicationStatusFilter<"KycApplication"> | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFilter<"KycApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"KycApplication"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type KycApplicationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    nicNumber?: SortOrder
+    addressLine1?: SortOrder
+    addressLine2?: SortOrderInput | SortOrder
+    city?: SortOrder
+    employmentStatus?: SortOrder
+    employerName?: SortOrderInput | SortOrder
+    jobTitle?: SortOrderInput | SortOrder
+    monthlyIncome?: SortOrder
+    sourceOfFunds?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type KycApplicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: KycApplicationWhereInput | KycApplicationWhereInput[]
+    OR?: KycApplicationWhereInput[]
+    NOT?: KycApplicationWhereInput | KycApplicationWhereInput[]
+    userId?: StringFilter<"KycApplication"> | string
+    nicNumber?: StringFilter<"KycApplication"> | string
+    addressLine1?: StringFilter<"KycApplication"> | string
+    addressLine2?: StringNullableFilter<"KycApplication"> | string | null
+    city?: StringFilter<"KycApplication"> | string
+    employmentStatus?: StringFilter<"KycApplication"> | string
+    employerName?: StringNullableFilter<"KycApplication"> | string | null
+    jobTitle?: StringNullableFilter<"KycApplication"> | string | null
+    monthlyIncome?: StringFilter<"KycApplication"> | string
+    sourceOfFunds?: StringFilter<"KycApplication"> | string
+    status?: EnumKycApplicationStatusFilter<"KycApplication"> | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFilter<"KycApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"KycApplication"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type KycApplicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    nicNumber?: SortOrder
+    addressLine1?: SortOrder
+    addressLine2?: SortOrderInput | SortOrder
+    city?: SortOrder
+    employmentStatus?: SortOrder
+    employerName?: SortOrderInput | SortOrder
+    jobTitle?: SortOrderInput | SortOrder
+    monthlyIncome?: SortOrder
+    sourceOfFunds?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: KycApplicationCountOrderByAggregateInput
+    _max?: KycApplicationMaxOrderByAggregateInput
+    _min?: KycApplicationMinOrderByAggregateInput
+  }
+
+  export type KycApplicationScalarWhereWithAggregatesInput = {
+    AND?: KycApplicationScalarWhereWithAggregatesInput | KycApplicationScalarWhereWithAggregatesInput[]
+    OR?: KycApplicationScalarWhereWithAggregatesInput[]
+    NOT?: KycApplicationScalarWhereWithAggregatesInput | KycApplicationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KycApplication"> | string
+    userId?: StringWithAggregatesFilter<"KycApplication"> | string
+    nicNumber?: StringWithAggregatesFilter<"KycApplication"> | string
+    addressLine1?: StringWithAggregatesFilter<"KycApplication"> | string
+    addressLine2?: StringNullableWithAggregatesFilter<"KycApplication"> | string | null
+    city?: StringWithAggregatesFilter<"KycApplication"> | string
+    employmentStatus?: StringWithAggregatesFilter<"KycApplication"> | string
+    employerName?: StringNullableWithAggregatesFilter<"KycApplication"> | string | null
+    jobTitle?: StringNullableWithAggregatesFilter<"KycApplication"> | string | null
+    monthlyIncome?: StringWithAggregatesFilter<"KycApplication"> | string
+    sourceOfFunds?: StringWithAggregatesFilter<"KycApplication"> | string
+    status?: EnumKycApplicationStatusWithAggregatesFilter<"KycApplication"> | $Enums.KycApplicationStatus
+    createdAt?: DateTimeWithAggregatesFilter<"KycApplication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"KycApplication"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -2124,6 +3654,7 @@ export namespace Prisma {
     kycStatus?: $Enums.KycStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    kycApplications?: KycApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -2135,6 +3666,7 @@ export namespace Prisma {
     kycStatus?: $Enums.KycStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    kycApplications?: KycApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -2146,6 +3678,7 @@ export namespace Prisma {
     kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kycApplications?: KycApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -2157,6 +3690,7 @@ export namespace Prisma {
     kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    kycApplications?: KycApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -2188,6 +3722,124 @@ export namespace Prisma {
     fullName?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationCreateInput = {
+    id?: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutKycApplicationsInput
+  }
+
+  export type KycApplicationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KycApplicationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutKycApplicationsNestedInput
+  }
+
+  export type KycApplicationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationCreateManyInput = {
+    id?: string
+    userId: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KycApplicationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2230,6 +3882,16 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type KycApplicationListRelationFilter = {
+    every?: KycApplicationWhereInput
+    some?: KycApplicationWhereInput
+    none?: KycApplicationWhereInput
+  }
+
+  export type KycApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -2317,6 +3979,131 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumKycApplicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.KycApplicationStatus | EnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumKycApplicationStatusFilter<$PrismaModel> | $Enums.KycApplicationStatus
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type KycApplicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    nicNumber?: SortOrder
+    addressLine1?: SortOrder
+    addressLine2?: SortOrder
+    city?: SortOrder
+    employmentStatus?: SortOrder
+    employerName?: SortOrder
+    jobTitle?: SortOrder
+    monthlyIncome?: SortOrder
+    sourceOfFunds?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KycApplicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    nicNumber?: SortOrder
+    addressLine1?: SortOrder
+    addressLine2?: SortOrder
+    city?: SortOrder
+    employmentStatus?: SortOrder
+    employerName?: SortOrder
+    jobTitle?: SortOrder
+    monthlyIncome?: SortOrder
+    sourceOfFunds?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KycApplicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    nicNumber?: SortOrder
+    addressLine1?: SortOrder
+    addressLine2?: SortOrder
+    city?: SortOrder
+    employmentStatus?: SortOrder
+    employerName?: SortOrder
+    jobTitle?: SortOrder
+    monthlyIncome?: SortOrder
+    sourceOfFunds?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumKycApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.KycApplicationStatus | EnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumKycApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.KycApplicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumKycApplicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumKycApplicationStatusFilter<$PrismaModel>
+  }
+
+  export type KycApplicationCreateNestedManyWithoutUserInput = {
+    create?: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput> | KycApplicationCreateWithoutUserInput[] | KycApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: KycApplicationCreateOrConnectWithoutUserInput | KycApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: KycApplicationCreateManyUserInputEnvelope
+    connect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+  }
+
+  export type KycApplicationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput> | KycApplicationCreateWithoutUserInput[] | KycApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: KycApplicationCreateOrConnectWithoutUserInput | KycApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: KycApplicationCreateManyUserInputEnvelope
+    connect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2331,6 +4118,56 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type KycApplicationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput> | KycApplicationCreateWithoutUserInput[] | KycApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: KycApplicationCreateOrConnectWithoutUserInput | KycApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: KycApplicationUpsertWithWhereUniqueWithoutUserInput | KycApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: KycApplicationCreateManyUserInputEnvelope
+    set?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    disconnect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    delete?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    connect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    update?: KycApplicationUpdateWithWhereUniqueWithoutUserInput | KycApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: KycApplicationUpdateManyWithWhereWithoutUserInput | KycApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: KycApplicationScalarWhereInput | KycApplicationScalarWhereInput[]
+  }
+
+  export type KycApplicationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput> | KycApplicationCreateWithoutUserInput[] | KycApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: KycApplicationCreateOrConnectWithoutUserInput | KycApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: KycApplicationUpsertWithWhereUniqueWithoutUserInput | KycApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: KycApplicationCreateManyUserInputEnvelope
+    set?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    disconnect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    delete?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    connect?: KycApplicationWhereUniqueInput | KycApplicationWhereUniqueInput[]
+    update?: KycApplicationUpdateWithWhereUniqueWithoutUserInput | KycApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: KycApplicationUpdateManyWithWhereWithoutUserInput | KycApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: KycApplicationScalarWhereInput | KycApplicationScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutKycApplicationsInput = {
+    create?: XOR<UserCreateWithoutKycApplicationsInput, UserUncheckedCreateWithoutKycApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutKycApplicationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type EnumKycApplicationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.KycApplicationStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutKycApplicationsNestedInput = {
+    create?: XOR<UserCreateWithoutKycApplicationsInput, UserUncheckedCreateWithoutKycApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutKycApplicationsInput
+    upsert?: UserUpsertWithoutKycApplicationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutKycApplicationsInput, UserUpdateWithoutKycApplicationsInput>, UserUncheckedUpdateWithoutKycApplicationsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2432,6 +4269,267 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumKycApplicationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.KycApplicationStatus | EnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumKycApplicationStatusFilter<$PrismaModel> | $Enums.KycApplicationStatus
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumKycApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.KycApplicationStatus | EnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KycApplicationStatus[] | ListEnumKycApplicationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumKycApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.KycApplicationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumKycApplicationStatusFilter<$PrismaModel>
+    _max?: NestedEnumKycApplicationStatusFilter<$PrismaModel>
+  }
+
+  export type KycApplicationCreateWithoutUserInput = {
+    id?: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KycApplicationUncheckedCreateWithoutUserInput = {
+    id?: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KycApplicationCreateOrConnectWithoutUserInput = {
+    where: KycApplicationWhereUniqueInput
+    create: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type KycApplicationCreateManyUserInputEnvelope = {
+    data: KycApplicationCreateManyUserInput | KycApplicationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type KycApplicationUpsertWithWhereUniqueWithoutUserInput = {
+    where: KycApplicationWhereUniqueInput
+    update: XOR<KycApplicationUpdateWithoutUserInput, KycApplicationUncheckedUpdateWithoutUserInput>
+    create: XOR<KycApplicationCreateWithoutUserInput, KycApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type KycApplicationUpdateWithWhereUniqueWithoutUserInput = {
+    where: KycApplicationWhereUniqueInput
+    data: XOR<KycApplicationUpdateWithoutUserInput, KycApplicationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type KycApplicationUpdateManyWithWhereWithoutUserInput = {
+    where: KycApplicationScalarWhereInput
+    data: XOR<KycApplicationUpdateManyMutationInput, KycApplicationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type KycApplicationScalarWhereInput = {
+    AND?: KycApplicationScalarWhereInput | KycApplicationScalarWhereInput[]
+    OR?: KycApplicationScalarWhereInput[]
+    NOT?: KycApplicationScalarWhereInput | KycApplicationScalarWhereInput[]
+    id?: StringFilter<"KycApplication"> | string
+    userId?: StringFilter<"KycApplication"> | string
+    nicNumber?: StringFilter<"KycApplication"> | string
+    addressLine1?: StringFilter<"KycApplication"> | string
+    addressLine2?: StringNullableFilter<"KycApplication"> | string | null
+    city?: StringFilter<"KycApplication"> | string
+    employmentStatus?: StringFilter<"KycApplication"> | string
+    employerName?: StringNullableFilter<"KycApplication"> | string | null
+    jobTitle?: StringNullableFilter<"KycApplication"> | string | null
+    monthlyIncome?: StringFilter<"KycApplication"> | string
+    sourceOfFunds?: StringFilter<"KycApplication"> | string
+    status?: EnumKycApplicationStatusFilter<"KycApplication"> | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFilter<"KycApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"KycApplication"> | Date | string
+  }
+
+  export type UserCreateWithoutKycApplicationsInput = {
+    id?: string
+    email: string
+    password: string
+    fullName: string
+    role?: $Enums.Role
+    kycStatus?: $Enums.KycStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserUncheckedCreateWithoutKycApplicationsInput = {
+    id?: string
+    email: string
+    password: string
+    fullName: string
+    role?: $Enums.Role
+    kycStatus?: $Enums.KycStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserCreateOrConnectWithoutKycApplicationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutKycApplicationsInput, UserUncheckedCreateWithoutKycApplicationsInput>
+  }
+
+  export type UserUpsertWithoutKycApplicationsInput = {
+    update: XOR<UserUpdateWithoutKycApplicationsInput, UserUncheckedUpdateWithoutKycApplicationsInput>
+    create: XOR<UserCreateWithoutKycApplicationsInput, UserUncheckedCreateWithoutKycApplicationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutKycApplicationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutKycApplicationsInput, UserUncheckedUpdateWithoutKycApplicationsInput>
+  }
+
+  export type UserUpdateWithoutKycApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUncheckedUpdateWithoutKycApplicationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    kycStatus?: EnumKycStatusFieldUpdateOperationsInput | $Enums.KycStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationCreateManyUserInput = {
+    id?: string
+    nicNumber: string
+    addressLine1: string
+    addressLine2?: string | null
+    city: string
+    employmentStatus: string
+    employerName?: string | null
+    jobTitle?: string | null
+    monthlyIncome: string
+    sourceOfFunds: string
+    status?: $Enums.KycApplicationStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KycApplicationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KycApplicationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    nicNumber?: StringFieldUpdateOperationsInput | string
+    addressLine1?: StringFieldUpdateOperationsInput | string
+    addressLine2?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: StringFieldUpdateOperationsInput | string
+    employmentStatus?: StringFieldUpdateOperationsInput | string
+    employerName?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    monthlyIncome?: StringFieldUpdateOperationsInput | string
+    sourceOfFunds?: StringFieldUpdateOperationsInput | string
+    status?: EnumKycApplicationStatusFieldUpdateOperationsInput | $Enums.KycApplicationStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

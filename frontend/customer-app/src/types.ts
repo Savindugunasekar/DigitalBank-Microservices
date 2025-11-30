@@ -8,6 +8,7 @@ export interface User {
   fullName: string;
   role: Role;
   kycStatus: "PENDING" | "VERIFIED" | "REJECTED";
+  hasSubmittedKyc: boolean;
   // plus any other fields prisma returns, but this is enough for now
 }
 

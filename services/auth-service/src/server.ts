@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./authRoutes";
 import adminRoutes from "./adminRoutes"; // 🔹 add this
+import kycRoutes from "./kycRoutes"
+import internaluserRoutes from "./internalUserRoutes"
 
 export function createServer() {
   const app = express();
@@ -16,7 +18,9 @@ export function createServer() {
   });
 
   app.use(authRoutes);
-  app.use(adminRoutes); // 🔹 add this
+  app.use(adminRoutes);
+  app.use(kycRoutes);
+  app.use(internaluserRoutes);
 
   return app;
 }

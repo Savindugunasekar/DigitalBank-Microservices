@@ -3,6 +3,7 @@ import AdminShell from "./AdminShell";
 import "./App.css";
 import { AuthProvider, useAuth } from "./auth";
 import AdminAccountsPage from "./pages/AdminAccountsPage";
+import AdminKycPage from "./pages/AdminKycPage";
 import AdminOverviewPage from "./pages/AdminOverviewPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import LoginPage from "./pages/LoginPage";
@@ -30,6 +31,7 @@ function AppContent() {
         <Route index element={<AdminOverviewPage />} />
         <Route path="users" element={<AdminUsersPage />} />
         <Route path="accounts" element={<AdminAccountsPage />} />
+        <Route path="/kyc" element={<AdminKycPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

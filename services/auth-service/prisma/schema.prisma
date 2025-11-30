@@ -20,6 +20,13 @@ enum KycStatus {
   REJECTED
 }
 
+enum KycApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
 model User {
   id         String    @id @default(cuid())
   email      String    @unique
@@ -29,4 +36,28 @@ model User {
   kycStatus  KycStatus @default(PENDING)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  kycApplications KycApplication[]
+}
+
+model KycApplication {
+  id             String               @id @default(cuid())
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nicNumber      String
+  addressLine1   String
+  addressLine2   String?
+  city           String
+  employmentStatus String
+  employerName   String?
+  jobTitle       String?
+  monthlyIncome  String
+  sourceOfFunds  String
+
+  status         KycApplicationStatus @default(SUBMITTED)
+
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@index([userId, status])
 }

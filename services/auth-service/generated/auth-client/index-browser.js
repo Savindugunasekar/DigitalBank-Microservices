@@ -132,6 +132,23 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.KycApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  nicNumber: 'nicNumber',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  employmentStatus: 'employmentStatus',
+  employerName: 'employerName',
+  jobTitle: 'jobTitle',
+  monthlyIncome: 'monthlyIncome',
+  sourceOfFunds: 'sourceOfFunds',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -140,6 +157,11 @@ exports.Prisma.SortOrder = {
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.Role = exports.$Enums.Role = {
   CUSTOMER: 'CUSTOMER',
@@ -153,8 +175,16 @@ exports.KycStatus = exports.$Enums.KycStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.KycApplicationStatus = exports.$Enums.KycApplicationStatus = {
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  KycApplication: 'KycApplication'
 };
 
 /**

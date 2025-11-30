@@ -2,6 +2,7 @@
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import type { User } from "./types";
+import { getMyProfile } from "./api"; // <-- make sure this exists
 
 interface AuthState {
   user: User | null;
@@ -11,6 +12,7 @@ interface AuthState {
 interface AuthContextValue extends AuthState {
   login: (data: { user: User; token: string }) => void;
   logout: () => void;
+  refreshUser: () => Promise<void>;  // <-- Added
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -19,14 +21,11 @@ const STORAGE_KEY = "digital-bank-auth";
 
 function loadInitialAuthState(): AuthState {
   if (typeof window === "undefined") {
-    // In case of SSR / non-browser
     return { user: null, token: null };
   }
 
   const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return { user: null, token: null };
-  }
+  if (!raw) return { user: null, token: null };
 
   try {
     const parsed = JSON.parse(raw) as AuthState;
@@ -54,11 +53,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.localStorage.removeItem(STORAGE_KEY);
   };
 
+  /** 🔥 Refresh user from backend /auth/me */
+  const refreshUser = async () => {
+    if (!state.token) return;
+
+    try {
+      const data = await getMyProfile(state.token); // { user }
+      const next: AuthState = { user: data.user, token: state.token };
+
+      setState(next);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch (error) {
+      console.error("Failed to refresh user profile:", error);
+    }
+  };
+
   const value: AuthContextValue = {
     user: state.user,
     token: state.token,
     login,
     logout,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
