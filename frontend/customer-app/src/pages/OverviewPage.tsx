@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Account, Transaction, Notification } from "../types";
 import { useAuth } from "../auth";
 import {
@@ -47,6 +48,22 @@ function OverviewPage() {
   const recentTransactions = transactions.slice(0, 5);
   const recentNotifications = notifications.slice(0, 4);
   const lastTx = recentTransactions[0] ?? null;
+  const kycStatus = user?.kycStatus ?? "PENDING";
+
+  const kycLabel =
+    kycStatus === "VERIFIED"
+      ? "KYC Verified"
+      : kycStatus === "REJECTED"
+        ? "KYC Rejected"
+        : "KYC Pending";
+
+  const kycBadgeClasses =
+    kycStatus === "VERIFIED"
+      ? "bg-emerald-500/10 text-emerald-200 border-emerald-400/60"
+      : kycStatus === "REJECTED"
+        ? "bg-rose-500/10 text-rose-200 border-rose-400/60"
+        : "bg-amber-500/10 text-amber-200 border-amber-400/60";
+
 
   return (
     <div className="space-y-6">
@@ -63,6 +80,20 @@ function OverviewPage() {
             Here&apos;s a quick snapshot of your balances, recent activity and
             alerts in one place.
           </p>
+          {user && user.kycStatus !== "VERIFIED" && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-400/50 bg-amber-500/5 px-3 py-1">
+              <span className="text-[11px] text-amber-200">
+                Your KYC is not verified yet.
+              </span>
+              <Link
+                to="/kyc"
+                className="text-[11px] font-medium text-amber-300 underline underline-offset-2"
+              >
+                Complete KYC
+              </Link>
+            </div>
+          )}
+
         </div>
 
         {mainAccount && (
@@ -112,7 +143,17 @@ function OverviewPage() {
           <p className="text-[11px] text-slate-500 mt-1">
             Savings, current and deposits
           </p>
+
+          <div className="mt-2">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${kycBadgeClasses}`}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-current" />
+              {kycLabel}
+            </span>
+          </div>
         </div>
+
 
         <div className="rounded-2xl border border-white/10 bg-slate-950/70 backdrop-blur-xl px-4 py-3 shadow-inner shadow-slate-900/70">
           <p className="text-[11px] text-slate-400 mb-1">Last transaction</p>
@@ -233,8 +274,8 @@ function OverviewPage() {
                   n.type === "FRAUD_ALERT"
                     ? "border-amber-400/50 bg-amber-500/5"
                     : n.type === "TRANSACTION"
-                    ? "border-emerald-400/50 bg-emerald-500/5"
-                    : "border-slate-500/40 bg-slate-500/5";
+                      ? "border-emerald-400/50 bg-emerald-500/5"
+                      : "border-slate-500/40 bg-slate-500/5";
 
                 return (
                   <div
@@ -259,8 +300,8 @@ function OverviewPage() {
                       {n.type === "FRAUD_ALERT"
                         ? "Fraud alert"
                         : n.type === "TRANSACTION"
-                        ? "Transaction update"
-                        : "System message"}
+                          ? "Transaction update"
+                          : "System message"}
                     </p>
                   </div>
                 );

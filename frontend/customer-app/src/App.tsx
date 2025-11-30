@@ -8,6 +8,7 @@ import OverviewPage from "./pages/OverviewPage";
 import AccountsPage from "./pages/AccountsPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import ActivityPage from "./pages/ActivityPage";
+import { KycFormPage } from "./pages/KycFormPage";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/kyc" element={<KycFormPage />} />
 
           {/* Authenticated app shell */}
           <Route

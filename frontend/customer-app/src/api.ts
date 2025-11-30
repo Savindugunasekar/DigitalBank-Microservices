@@ -19,6 +19,18 @@ export interface CreateAccountPayload {
   type?: AccountType;
 }
 
+export type KycApplicationPayload = {
+  nicNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  employmentStatus: string;
+  employerName?: string;
+  jobTitle?: string;
+  monthlyIncome: string;
+  sourceOfFunds: string;
+};
+
 export interface LoginResponse {
   token: string;
   user: User;
@@ -152,5 +164,21 @@ export async function createAccount(
     }
   );
 
+  return res.data;
+}
+
+export async function submitKycApplication(
+  token: string,
+  payload: KycApplicationPayload
+): Promise<{ message: string }> {
+  const res = await axios.post<{ message: string }>(
+    `${AUTH_BASE_URL}/kyc/applications`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return res.data;
 }

@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import type { Account } from "../types";
 import { useAuth } from "../auth";
 import { getMyAccounts, createAccount } from "../api";
+import { useNavigate } from "react-router-dom";
 
 type AccountType = "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT";
 
 function AccountsPage() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
 
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +22,23 @@ function AccountsPage() {
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+
+  // KYC helpers
+  const kycStatus = user?.kycStatus ?? "PENDING";
+
+  const kycLabel =
+    kycStatus === "VERIFIED"
+      ? "KYC Verified"
+      : kycStatus === "REJECTED"
+      ? "KYC Rejected"
+      : "KYC Pending";
+
+  const kycBadgeClasses =
+    kycStatus === "VERIFIED"
+      ? "bg-emerald-500/10 text-emerald-300 border-emerald-400/60"
+      : kycStatus === "REJECTED"
+      ? "bg-rose-500/10 text-rose-300 border-rose-400/60"
+      : "bg-amber-500/10 text-amber-200 border-amber-400/60";
 
   // Fetch accounts
   useEffect(() => {
@@ -52,8 +71,17 @@ function AccountsPage() {
     accounts.find((a) => a.id === selectedAccountId) ?? null;
 
   async function handleOpenAccount() {
-    if (!token) {
+    if (!token || !user) {
       setCreateError("You must be logged in to open an account.");
+      navigate("/login");
+      return;
+    }
+
+    if (user.kycStatus !== "VERIFIED") {
+      setCreateError(
+        "You must complete KYC verification before opening a new account. Redirecting you to the KYC form."
+      );
+      navigate("/kyc");
       return;
     }
 
@@ -247,9 +275,7 @@ function AccountsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-[11px] text-slate-400 mb-0.5">
-                      Type
-                    </p>
+                    <p className="text-[11px] text-slate-400 mb-0.5">Type</p>
                     <p className="font-medium">
                       {typeLabel(selectedAccount.type)}
                     </p>
@@ -332,6 +358,21 @@ function AccountsPage() {
               Create an additional account to separate savings, salary, or
               day-to-day spending.
             </p>
+
+            {/* KYC status badge */}
+            <div className="mb-3">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium ${kycBadgeClasses}`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                {kycLabel}
+              </span>
+              {kycStatus !== "VERIFIED" && (
+                <p className="mt-1 text-[10px] text-amber-200">
+                  You&apos;ll need to complete KYC before opening a new account.
+                </p>
+              )}
+            </div>
 
             {createError && (
               <div className="mb-2 text-[11px] text-red-400 bg-red-950/40 border border-red-700 rounded p-2">
