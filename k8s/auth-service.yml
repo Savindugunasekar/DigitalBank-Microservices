@@ -43,7 +43,7 @@ spec:
                   name: digital-bank-secrets
                   key: JWT_SECRET
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@postgres.digital-bank.svc.cluster.local:5432/digital_bank_auth?schema=public"
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_auth?schema=public"
           readinessProbe:
             httpGet:
               path: /health

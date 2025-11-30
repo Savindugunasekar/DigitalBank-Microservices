@@ -21,7 +21,7 @@ spec:
             - name: PORT
               value: "4003"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@postgres.digital-bank.svc.cluster.local:5432/digital_bank_transaction?schema=public"
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_transaction?schema=public"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service:4001"
             - name: ACCOUNT_SERVICE_URL

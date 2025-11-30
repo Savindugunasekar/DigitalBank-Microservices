@@ -21,7 +21,7 @@ spec:
             - name: PORT
               value: "4002"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@postgres.digital-bank.svc.cluster.local:5432/digital_bank_account?schema=public"
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_account?schema=public"
             - name: JWT_SECRET
               value: "supersecret_change_me"
           ports:
