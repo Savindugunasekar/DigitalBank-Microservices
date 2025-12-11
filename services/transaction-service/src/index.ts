@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { createServer } from "./server";
+import {  startRecurringPaymentsScheduler} from "./recurringPaymentsRoutes";
+
 
 const PORT = process.env.PORT || 4003;
 
@@ -8,6 +10,7 @@ async function main() {
 
   app.listen(PORT, () => {
     console.log(`Transaction service listening on port ${PORT}`);
+    startRecurringPaymentsScheduler();
   });
 }
 

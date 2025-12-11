@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import transactionRoutes from "./transactionRoutes"
-
+import recurringPaymentsRoutes from "./recurringPaymentsRoutes"
 export function createServer() {
   const app = express();
 
@@ -14,6 +14,7 @@ export function createServer() {
 
   // Transaction routes
   app.use(transactionRoutes);
+  app.use(recurringPaymentsRoutes)
 
   return app;
 }

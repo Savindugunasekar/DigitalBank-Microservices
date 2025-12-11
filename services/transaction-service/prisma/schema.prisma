@@ -16,6 +16,18 @@ enum TransactionStatus {
   REJECTED
 }
 
+enum RecurringPaymentStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
 model Transaction {
   id            String            @id @default(cuid())
   fromAccountId String
@@ -25,4 +37,26 @@ model Transaction {
   reference     String?           // optional description/reference
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
+}
+
+model RecurringPayment {
+  id            String                 @id @default(cuid())
+  userId        String                 // from JWT (auth-service user id)
+  fromAccountId String                 // account-service IDs as strings
+  toAccountId   String
+  amount        Decimal
+  currency      String                 @default("LKR")
+
+  interval      RecurringInterval      // DAILY | WEEKLY | MONTHLY
+
+  // For scheduling
+  nextRunAt     DateTime               // when this should fire next
+  lastRunAt     DateTime?              // last time it ran
+
+  // Optional extra info
+  description   String?
+  status        RecurringPaymentStatus @default(ACTIVE)
+
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
 }

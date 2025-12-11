@@ -132,6 +132,22 @@ exports.Prisma.TransactionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RecurringPaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fromAccountId: 'fromAccountId',
+  toAccountId: 'toAccountId',
+  amount: 'amount',
+  currency: 'currency',
+  interval: 'interval',
+  nextRunAt: 'nextRunAt',
+  lastRunAt: 'lastRunAt',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -154,8 +170,21 @@ exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.RecurringInterval = exports.$Enums.RecurringInterval = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
+exports.RecurringPaymentStatus = exports.$Enums.RecurringPaymentStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  RecurringPayment: 'RecurringPayment'
 };
 
 /**

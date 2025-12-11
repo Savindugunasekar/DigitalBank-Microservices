@@ -104,6 +104,22 @@ exports.Prisma.TransactionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RecurringPaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fromAccountId: 'fromAccountId',
+  toAccountId: 'toAccountId',
+  amount: 'amount',
+  currency: 'currency',
+  interval: 'interval',
+  nextRunAt: 'nextRunAt',
+  lastRunAt: 'lastRunAt',
+  description: 'description',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -126,8 +142,21 @@ exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.RecurringPaymentStatus = exports.$Enums.RecurringPaymentStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.RecurringInterval = exports.$Enums.RecurringInterval = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
 exports.Prisma.ModelName = {
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  RecurringPayment: 'RecurringPayment'
 };
 /**
  * Create the Client
@@ -176,13 +205,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/transaction-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum TransactionStatus {\n  PENDING\n  APPROVED\n  FLAGGED\n  EXECUTED\n  REJECTED\n}\n\nmodel Transaction {\n  id            String            @id @default(cuid())\n  fromAccountId String\n  toAccountId   String\n  amount        Decimal\n  status        TransactionStatus @default(PENDING)\n  reference     String? // optional description/reference\n  createdAt     DateTime          @default(now())\n  updatedAt     DateTime          @updatedAt\n}\n",
-  "inlineSchemaHash": "6bfd412b6fe926c09c13cf59b04dc3e6b9af67970d27369345664ce2f252adca",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/transaction-client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum TransactionStatus {\n  PENDING\n  APPROVED\n  FLAGGED\n  EXECUTED\n  REJECTED\n}\n\nenum RecurringPaymentStatus {\n  ACTIVE\n  PAUSED\n  CANCELLED\n}\n\nenum RecurringInterval {\n  DAILY\n  WEEKLY\n  MONTHLY\n}\n\nmodel Transaction {\n  id            String            @id @default(cuid())\n  fromAccountId String\n  toAccountId   String\n  amount        Decimal\n  status        TransactionStatus @default(PENDING)\n  reference     String? // optional description/reference\n  createdAt     DateTime          @default(now())\n  updatedAt     DateTime          @updatedAt\n}\n\nmodel RecurringPayment {\n  id            String  @id @default(cuid())\n  userId        String // from JWT (auth-service user id)\n  fromAccountId String // account-service IDs as strings\n  toAccountId   String\n  amount        Decimal\n  currency      String  @default(\"LKR\")\n\n  interval RecurringInterval // DAILY | WEEKLY | MONTHLY\n\n  // For scheduling\n  nextRunAt DateTime // when this should fire next\n  lastRunAt DateTime? // last time it ran\n\n  // Optional extra info\n  description String?\n  status      RecurringPaymentStatus @default(ACTIVE)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "2063067d0ed6ff52d51406047922a6e27e95fd8d470373fa3b56230d54d9bd20",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TransactionStatus\"},{\"name\":\"reference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Transaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"TransactionStatus\"},{\"name\":\"reference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"RecurringPayment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fromAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"toAccountId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"interval\",\"kind\":\"enum\",\"type\":\"RecurringInterval\"},{\"name\":\"nextRunAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"lastRunAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"RecurringPaymentStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

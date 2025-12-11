@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+/**
+ * Model RecurringPayment
+ * 
+ */
+export type RecurringPayment = $Result.DefaultSelection<Prisma.$RecurringPaymentPayload>
 
 /**
  * Enums
@@ -33,11 +38,37 @@ export namespace $Enums {
 
 export type TransactionStatus = (typeof TransactionStatus)[keyof typeof TransactionStatus]
 
+
+export const RecurringPaymentStatus: {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type RecurringPaymentStatus = (typeof RecurringPaymentStatus)[keyof typeof RecurringPaymentStatus]
+
+
+export const RecurringInterval: {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+};
+
+export type RecurringInterval = (typeof RecurringInterval)[keyof typeof RecurringInterval]
+
 }
 
 export type TransactionStatus = $Enums.TransactionStatus
 
 export const TransactionStatus: typeof $Enums.TransactionStatus
+
+export type RecurringPaymentStatus = $Enums.RecurringPaymentStatus
+
+export const RecurringPaymentStatus: typeof $Enums.RecurringPaymentStatus
+
+export type RecurringInterval = $Enums.RecurringInterval
+
+export const RecurringInterval: typeof $Enums.RecurringInterval
 
 /**
  * ##  Prisma Client ʲˢ
@@ -166,6 +197,16 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recurringPayment`: Exposes CRUD operations for the **RecurringPayment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RecurringPayments
+    * const recurringPayments = await prisma.recurringPayment.findMany()
+    * ```
+    */
+  get recurringPayment(): Prisma.RecurringPaymentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -607,7 +648,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    Transaction: 'Transaction'
+    Transaction: 'Transaction',
+    RecurringPayment: 'RecurringPayment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -626,7 +668,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "transaction"
+      modelProps: "transaction" | "recurringPayment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -701,6 +743,80 @@ export namespace Prisma {
           count: {
             args: Prisma.TransactionCountArgs<ExtArgs>
             result: $Utils.Optional<TransactionCountAggregateOutputType> | number
+          }
+        }
+      }
+      RecurringPayment: {
+        payload: Prisma.$RecurringPaymentPayload<ExtArgs>
+        fields: Prisma.RecurringPaymentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecurringPaymentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecurringPaymentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          findFirst: {
+            args: Prisma.RecurringPaymentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecurringPaymentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          findMany: {
+            args: Prisma.RecurringPaymentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>[]
+          }
+          create: {
+            args: Prisma.RecurringPaymentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          createMany: {
+            args: Prisma.RecurringPaymentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RecurringPaymentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>[]
+          }
+          delete: {
+            args: Prisma.RecurringPaymentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          update: {
+            args: Prisma.RecurringPaymentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          deleteMany: {
+            args: Prisma.RecurringPaymentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecurringPaymentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RecurringPaymentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>[]
+          }
+          upsert: {
+            args: Prisma.RecurringPaymentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringPaymentPayload>
+          }
+          aggregate: {
+            args: Prisma.RecurringPaymentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecurringPayment>
+          }
+          groupBy: {
+            args: Prisma.RecurringPaymentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecurringPaymentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RecurringPaymentCountArgs<ExtArgs>
+            result: $Utils.Optional<RecurringPaymentCountAggregateOutputType> | number
           }
         }
       }
@@ -801,6 +917,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     transaction?: TransactionOmit
+    recurringPayment?: RecurringPaymentOmit
   }
 
   /* Types for Logging */
@@ -1950,6 +2067,1139 @@ export namespace Prisma {
 
 
   /**
+   * Model RecurringPayment
+   */
+
+  export type AggregateRecurringPayment = {
+    _count: RecurringPaymentCountAggregateOutputType | null
+    _avg: RecurringPaymentAvgAggregateOutputType | null
+    _sum: RecurringPaymentSumAggregateOutputType | null
+    _min: RecurringPaymentMinAggregateOutputType | null
+    _max: RecurringPaymentMaxAggregateOutputType | null
+  }
+
+  export type RecurringPaymentAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type RecurringPaymentSumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type RecurringPaymentMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    fromAccountId: string | null
+    toAccountId: string | null
+    amount: Decimal | null
+    currency: string | null
+    interval: $Enums.RecurringInterval | null
+    nextRunAt: Date | null
+    lastRunAt: Date | null
+    description: string | null
+    status: $Enums.RecurringPaymentStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RecurringPaymentMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    fromAccountId: string | null
+    toAccountId: string | null
+    amount: Decimal | null
+    currency: string | null
+    interval: $Enums.RecurringInterval | null
+    nextRunAt: Date | null
+    lastRunAt: Date | null
+    description: string | null
+    status: $Enums.RecurringPaymentStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RecurringPaymentCountAggregateOutputType = {
+    id: number
+    userId: number
+    fromAccountId: number
+    toAccountId: number
+    amount: number
+    currency: number
+    interval: number
+    nextRunAt: number
+    lastRunAt: number
+    description: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RecurringPaymentAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type RecurringPaymentSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type RecurringPaymentMinAggregateInputType = {
+    id?: true
+    userId?: true
+    fromAccountId?: true
+    toAccountId?: true
+    amount?: true
+    currency?: true
+    interval?: true
+    nextRunAt?: true
+    lastRunAt?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RecurringPaymentMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    fromAccountId?: true
+    toAccountId?: true
+    amount?: true
+    currency?: true
+    interval?: true
+    nextRunAt?: true
+    lastRunAt?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RecurringPaymentCountAggregateInputType = {
+    id?: true
+    userId?: true
+    fromAccountId?: true
+    toAccountId?: true
+    amount?: true
+    currency?: true
+    interval?: true
+    nextRunAt?: true
+    lastRunAt?: true
+    description?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RecurringPaymentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecurringPayment to aggregate.
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringPayments to fetch.
+     */
+    orderBy?: RecurringPaymentOrderByWithRelationInput | RecurringPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecurringPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RecurringPayments
+    **/
+    _count?: true | RecurringPaymentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RecurringPaymentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RecurringPaymentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecurringPaymentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecurringPaymentMaxAggregateInputType
+  }
+
+  export type GetRecurringPaymentAggregateType<T extends RecurringPaymentAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecurringPayment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecurringPayment[P]>
+      : GetScalarType<T[P], AggregateRecurringPayment[P]>
+  }
+
+
+
+
+  export type RecurringPaymentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecurringPaymentWhereInput
+    orderBy?: RecurringPaymentOrderByWithAggregationInput | RecurringPaymentOrderByWithAggregationInput[]
+    by: RecurringPaymentScalarFieldEnum[] | RecurringPaymentScalarFieldEnum
+    having?: RecurringPaymentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecurringPaymentCountAggregateInputType | true
+    _avg?: RecurringPaymentAvgAggregateInputType
+    _sum?: RecurringPaymentSumAggregateInputType
+    _min?: RecurringPaymentMinAggregateInputType
+    _max?: RecurringPaymentMaxAggregateInputType
+  }
+
+  export type RecurringPaymentGroupByOutputType = {
+    id: string
+    userId: string
+    fromAccountId: string
+    toAccountId: string
+    amount: Decimal
+    currency: string
+    interval: $Enums.RecurringInterval
+    nextRunAt: Date
+    lastRunAt: Date | null
+    description: string | null
+    status: $Enums.RecurringPaymentStatus
+    createdAt: Date
+    updatedAt: Date
+    _count: RecurringPaymentCountAggregateOutputType | null
+    _avg: RecurringPaymentAvgAggregateOutputType | null
+    _sum: RecurringPaymentSumAggregateOutputType | null
+    _min: RecurringPaymentMinAggregateOutputType | null
+    _max: RecurringPaymentMaxAggregateOutputType | null
+  }
+
+  type GetRecurringPaymentGroupByPayload<T extends RecurringPaymentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecurringPaymentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecurringPaymentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecurringPaymentGroupByOutputType[P]>
+            : GetScalarType<T[P], RecurringPaymentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecurringPaymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fromAccountId?: boolean
+    toAccountId?: boolean
+    amount?: boolean
+    currency?: boolean
+    interval?: boolean
+    nextRunAt?: boolean
+    lastRunAt?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["recurringPayment"]>
+
+  export type RecurringPaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fromAccountId?: boolean
+    toAccountId?: boolean
+    amount?: boolean
+    currency?: boolean
+    interval?: boolean
+    nextRunAt?: boolean
+    lastRunAt?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["recurringPayment"]>
+
+  export type RecurringPaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    fromAccountId?: boolean
+    toAccountId?: boolean
+    amount?: boolean
+    currency?: boolean
+    interval?: boolean
+    nextRunAt?: boolean
+    lastRunAt?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["recurringPayment"]>
+
+  export type RecurringPaymentSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    fromAccountId?: boolean
+    toAccountId?: boolean
+    amount?: boolean
+    currency?: boolean
+    interval?: boolean
+    nextRunAt?: boolean
+    lastRunAt?: boolean
+    description?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RecurringPaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fromAccountId" | "toAccountId" | "amount" | "currency" | "interval" | "nextRunAt" | "lastRunAt" | "description" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["recurringPayment"]>
+
+  export type $RecurringPaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RecurringPayment"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      fromAccountId: string
+      toAccountId: string
+      amount: Prisma.Decimal
+      currency: string
+      interval: $Enums.RecurringInterval
+      nextRunAt: Date
+      lastRunAt: Date | null
+      description: string | null
+      status: $Enums.RecurringPaymentStatus
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["recurringPayment"]>
+    composites: {}
+  }
+
+  type RecurringPaymentGetPayload<S extends boolean | null | undefined | RecurringPaymentDefaultArgs> = $Result.GetResult<Prisma.$RecurringPaymentPayload, S>
+
+  type RecurringPaymentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecurringPaymentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecurringPaymentCountAggregateInputType | true
+    }
+
+  export interface RecurringPaymentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RecurringPayment'], meta: { name: 'RecurringPayment' } }
+    /**
+     * Find zero or one RecurringPayment that matches the filter.
+     * @param {RecurringPaymentFindUniqueArgs} args - Arguments to find a RecurringPayment
+     * @example
+     * // Get one RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecurringPaymentFindUniqueArgs>(args: SelectSubset<T, RecurringPaymentFindUniqueArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RecurringPayment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecurringPaymentFindUniqueOrThrowArgs} args - Arguments to find a RecurringPayment
+     * @example
+     * // Get one RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecurringPaymentFindUniqueOrThrowArgs>(args: SelectSubset<T, RecurringPaymentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecurringPayment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentFindFirstArgs} args - Arguments to find a RecurringPayment
+     * @example
+     * // Get one RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecurringPaymentFindFirstArgs>(args?: SelectSubset<T, RecurringPaymentFindFirstArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecurringPayment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentFindFirstOrThrowArgs} args - Arguments to find a RecurringPayment
+     * @example
+     * // Get one RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecurringPaymentFindFirstOrThrowArgs>(args?: SelectSubset<T, RecurringPaymentFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RecurringPayments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RecurringPayments
+     * const recurringPayments = await prisma.recurringPayment.findMany()
+     * 
+     * // Get first 10 RecurringPayments
+     * const recurringPayments = await prisma.recurringPayment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recurringPaymentWithIdOnly = await prisma.recurringPayment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecurringPaymentFindManyArgs>(args?: SelectSubset<T, RecurringPaymentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RecurringPayment.
+     * @param {RecurringPaymentCreateArgs} args - Arguments to create a RecurringPayment.
+     * @example
+     * // Create one RecurringPayment
+     * const RecurringPayment = await prisma.recurringPayment.create({
+     *   data: {
+     *     // ... data to create a RecurringPayment
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecurringPaymentCreateArgs>(args: SelectSubset<T, RecurringPaymentCreateArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RecurringPayments.
+     * @param {RecurringPaymentCreateManyArgs} args - Arguments to create many RecurringPayments.
+     * @example
+     * // Create many RecurringPayments
+     * const recurringPayment = await prisma.recurringPayment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecurringPaymentCreateManyArgs>(args?: SelectSubset<T, RecurringPaymentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RecurringPayments and returns the data saved in the database.
+     * @param {RecurringPaymentCreateManyAndReturnArgs} args - Arguments to create many RecurringPayments.
+     * @example
+     * // Create many RecurringPayments
+     * const recurringPayment = await prisma.recurringPayment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RecurringPayments and only return the `id`
+     * const recurringPaymentWithIdOnly = await prisma.recurringPayment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RecurringPaymentCreateManyAndReturnArgs>(args?: SelectSubset<T, RecurringPaymentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RecurringPayment.
+     * @param {RecurringPaymentDeleteArgs} args - Arguments to delete one RecurringPayment.
+     * @example
+     * // Delete one RecurringPayment
+     * const RecurringPayment = await prisma.recurringPayment.delete({
+     *   where: {
+     *     // ... filter to delete one RecurringPayment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecurringPaymentDeleteArgs>(args: SelectSubset<T, RecurringPaymentDeleteArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RecurringPayment.
+     * @param {RecurringPaymentUpdateArgs} args - Arguments to update one RecurringPayment.
+     * @example
+     * // Update one RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecurringPaymentUpdateArgs>(args: SelectSubset<T, RecurringPaymentUpdateArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RecurringPayments.
+     * @param {RecurringPaymentDeleteManyArgs} args - Arguments to filter RecurringPayments to delete.
+     * @example
+     * // Delete a few RecurringPayments
+     * const { count } = await prisma.recurringPayment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecurringPaymentDeleteManyArgs>(args?: SelectSubset<T, RecurringPaymentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecurringPayments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RecurringPayments
+     * const recurringPayment = await prisma.recurringPayment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecurringPaymentUpdateManyArgs>(args: SelectSubset<T, RecurringPaymentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecurringPayments and returns the data updated in the database.
+     * @param {RecurringPaymentUpdateManyAndReturnArgs} args - Arguments to update many RecurringPayments.
+     * @example
+     * // Update many RecurringPayments
+     * const recurringPayment = await prisma.recurringPayment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RecurringPayments and only return the `id`
+     * const recurringPaymentWithIdOnly = await prisma.recurringPayment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RecurringPaymentUpdateManyAndReturnArgs>(args: SelectSubset<T, RecurringPaymentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RecurringPayment.
+     * @param {RecurringPaymentUpsertArgs} args - Arguments to update or create a RecurringPayment.
+     * @example
+     * // Update or create a RecurringPayment
+     * const recurringPayment = await prisma.recurringPayment.upsert({
+     *   create: {
+     *     // ... data to create a RecurringPayment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RecurringPayment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecurringPaymentUpsertArgs>(args: SelectSubset<T, RecurringPaymentUpsertArgs<ExtArgs>>): Prisma__RecurringPaymentClient<$Result.GetResult<Prisma.$RecurringPaymentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RecurringPayments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentCountArgs} args - Arguments to filter RecurringPayments to count.
+     * @example
+     * // Count the number of RecurringPayments
+     * const count = await prisma.recurringPayment.count({
+     *   where: {
+     *     // ... the filter for the RecurringPayments we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecurringPaymentCountArgs>(
+      args?: Subset<T, RecurringPaymentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecurringPaymentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RecurringPayment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecurringPaymentAggregateArgs>(args: Subset<T, RecurringPaymentAggregateArgs>): Prisma.PrismaPromise<GetRecurringPaymentAggregateType<T>>
+
+    /**
+     * Group by RecurringPayment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringPaymentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecurringPaymentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecurringPaymentGroupByArgs['orderBy'] }
+        : { orderBy?: RecurringPaymentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecurringPaymentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecurringPaymentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RecurringPayment model
+   */
+  readonly fields: RecurringPaymentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RecurringPayment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecurringPaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RecurringPayment model
+   */
+  interface RecurringPaymentFieldRefs {
+    readonly id: FieldRef<"RecurringPayment", 'String'>
+    readonly userId: FieldRef<"RecurringPayment", 'String'>
+    readonly fromAccountId: FieldRef<"RecurringPayment", 'String'>
+    readonly toAccountId: FieldRef<"RecurringPayment", 'String'>
+    readonly amount: FieldRef<"RecurringPayment", 'Decimal'>
+    readonly currency: FieldRef<"RecurringPayment", 'String'>
+    readonly interval: FieldRef<"RecurringPayment", 'RecurringInterval'>
+    readonly nextRunAt: FieldRef<"RecurringPayment", 'DateTime'>
+    readonly lastRunAt: FieldRef<"RecurringPayment", 'DateTime'>
+    readonly description: FieldRef<"RecurringPayment", 'String'>
+    readonly status: FieldRef<"RecurringPayment", 'RecurringPaymentStatus'>
+    readonly createdAt: FieldRef<"RecurringPayment", 'DateTime'>
+    readonly updatedAt: FieldRef<"RecurringPayment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RecurringPayment findUnique
+   */
+  export type RecurringPaymentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter, which RecurringPayment to fetch.
+     */
+    where: RecurringPaymentWhereUniqueInput
+  }
+
+  /**
+   * RecurringPayment findUniqueOrThrow
+   */
+  export type RecurringPaymentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter, which RecurringPayment to fetch.
+     */
+    where: RecurringPaymentWhereUniqueInput
+  }
+
+  /**
+   * RecurringPayment findFirst
+   */
+  export type RecurringPaymentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter, which RecurringPayment to fetch.
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringPayments to fetch.
+     */
+    orderBy?: RecurringPaymentOrderByWithRelationInput | RecurringPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecurringPayments.
+     */
+    cursor?: RecurringPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecurringPayments.
+     */
+    distinct?: RecurringPaymentScalarFieldEnum | RecurringPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringPayment findFirstOrThrow
+   */
+  export type RecurringPaymentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter, which RecurringPayment to fetch.
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringPayments to fetch.
+     */
+    orderBy?: RecurringPaymentOrderByWithRelationInput | RecurringPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecurringPayments.
+     */
+    cursor?: RecurringPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecurringPayments.
+     */
+    distinct?: RecurringPaymentScalarFieldEnum | RecurringPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringPayment findMany
+   */
+  export type RecurringPaymentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter, which RecurringPayments to fetch.
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringPayments to fetch.
+     */
+    orderBy?: RecurringPaymentOrderByWithRelationInput | RecurringPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RecurringPayments.
+     */
+    cursor?: RecurringPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringPayments.
+     */
+    skip?: number
+    distinct?: RecurringPaymentScalarFieldEnum | RecurringPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringPayment create
+   */
+  export type RecurringPaymentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * The data needed to create a RecurringPayment.
+     */
+    data: XOR<RecurringPaymentCreateInput, RecurringPaymentUncheckedCreateInput>
+  }
+
+  /**
+   * RecurringPayment createMany
+   */
+  export type RecurringPaymentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RecurringPayments.
+     */
+    data: RecurringPaymentCreateManyInput | RecurringPaymentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RecurringPayment createManyAndReturn
+   */
+  export type RecurringPaymentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * The data used to create many RecurringPayments.
+     */
+    data: RecurringPaymentCreateManyInput | RecurringPaymentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RecurringPayment update
+   */
+  export type RecurringPaymentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * The data needed to update a RecurringPayment.
+     */
+    data: XOR<RecurringPaymentUpdateInput, RecurringPaymentUncheckedUpdateInput>
+    /**
+     * Choose, which RecurringPayment to update.
+     */
+    where: RecurringPaymentWhereUniqueInput
+  }
+
+  /**
+   * RecurringPayment updateMany
+   */
+  export type RecurringPaymentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RecurringPayments.
+     */
+    data: XOR<RecurringPaymentUpdateManyMutationInput, RecurringPaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which RecurringPayments to update
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * Limit how many RecurringPayments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringPayment updateManyAndReturn
+   */
+  export type RecurringPaymentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * The data used to update RecurringPayments.
+     */
+    data: XOR<RecurringPaymentUpdateManyMutationInput, RecurringPaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which RecurringPayments to update
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * Limit how many RecurringPayments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringPayment upsert
+   */
+  export type RecurringPaymentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * The filter to search for the RecurringPayment to update in case it exists.
+     */
+    where: RecurringPaymentWhereUniqueInput
+    /**
+     * In case the RecurringPayment found by the `where` argument doesn't exist, create a new RecurringPayment with this data.
+     */
+    create: XOR<RecurringPaymentCreateInput, RecurringPaymentUncheckedCreateInput>
+    /**
+     * In case the RecurringPayment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecurringPaymentUpdateInput, RecurringPaymentUncheckedUpdateInput>
+  }
+
+  /**
+   * RecurringPayment delete
+   */
+  export type RecurringPaymentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+    /**
+     * Filter which RecurringPayment to delete.
+     */
+    where: RecurringPaymentWhereUniqueInput
+  }
+
+  /**
+   * RecurringPayment deleteMany
+   */
+  export type RecurringPaymentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecurringPayments to delete
+     */
+    where?: RecurringPaymentWhereInput
+    /**
+     * Limit how many RecurringPayments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringPayment without action
+   */
+  export type RecurringPaymentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringPayment
+     */
+    select?: RecurringPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringPayment
+     */
+    omit?: RecurringPaymentOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -1975,6 +3225,25 @@ export namespace Prisma {
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+  export const RecurringPaymentScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    fromAccountId: 'fromAccountId',
+    toAccountId: 'toAccountId',
+    amount: 'amount',
+    currency: 'currency',
+    interval: 'interval',
+    nextRunAt: 'nextRunAt',
+    lastRunAt: 'lastRunAt',
+    description: 'description',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RecurringPaymentScalarFieldEnum = (typeof RecurringPaymentScalarFieldEnum)[keyof typeof RecurringPaymentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2059,6 +3328,34 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecurringInterval'
+   */
+  export type EnumRecurringIntervalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurringInterval'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecurringInterval[]'
+   */
+  export type ListEnumRecurringIntervalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurringInterval[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecurringPaymentStatus'
+   */
+  export type EnumRecurringPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurringPaymentStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RecurringPaymentStatus[]'
+   */
+  export type ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecurringPaymentStatus[]'>
     
 
 
@@ -2148,6 +3445,100 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   }
 
+  export type RecurringPaymentWhereInput = {
+    AND?: RecurringPaymentWhereInput | RecurringPaymentWhereInput[]
+    OR?: RecurringPaymentWhereInput[]
+    NOT?: RecurringPaymentWhereInput | RecurringPaymentWhereInput[]
+    id?: StringFilter<"RecurringPayment"> | string
+    userId?: StringFilter<"RecurringPayment"> | string
+    fromAccountId?: StringFilter<"RecurringPayment"> | string
+    toAccountId?: StringFilter<"RecurringPayment"> | string
+    amount?: DecimalFilter<"RecurringPayment"> | Decimal | DecimalJsLike | number | string
+    currency?: StringFilter<"RecurringPayment"> | string
+    interval?: EnumRecurringIntervalFilter<"RecurringPayment"> | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+    lastRunAt?: DateTimeNullableFilter<"RecurringPayment"> | Date | string | null
+    description?: StringNullableFilter<"RecurringPayment"> | string | null
+    status?: EnumRecurringPaymentStatusFilter<"RecurringPayment"> | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+    updatedAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+  }
+
+  export type RecurringPaymentOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fromAccountId?: SortOrder
+    toAccountId?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    interval?: SortOrder
+    nextRunAt?: SortOrder
+    lastRunAt?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RecurringPaymentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RecurringPaymentWhereInput | RecurringPaymentWhereInput[]
+    OR?: RecurringPaymentWhereInput[]
+    NOT?: RecurringPaymentWhereInput | RecurringPaymentWhereInput[]
+    userId?: StringFilter<"RecurringPayment"> | string
+    fromAccountId?: StringFilter<"RecurringPayment"> | string
+    toAccountId?: StringFilter<"RecurringPayment"> | string
+    amount?: DecimalFilter<"RecurringPayment"> | Decimal | DecimalJsLike | number | string
+    currency?: StringFilter<"RecurringPayment"> | string
+    interval?: EnumRecurringIntervalFilter<"RecurringPayment"> | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+    lastRunAt?: DateTimeNullableFilter<"RecurringPayment"> | Date | string | null
+    description?: StringNullableFilter<"RecurringPayment"> | string | null
+    status?: EnumRecurringPaymentStatusFilter<"RecurringPayment"> | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+    updatedAt?: DateTimeFilter<"RecurringPayment"> | Date | string
+  }, "id">
+
+  export type RecurringPaymentOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fromAccountId?: SortOrder
+    toAccountId?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    interval?: SortOrder
+    nextRunAt?: SortOrder
+    lastRunAt?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RecurringPaymentCountOrderByAggregateInput
+    _avg?: RecurringPaymentAvgOrderByAggregateInput
+    _max?: RecurringPaymentMaxOrderByAggregateInput
+    _min?: RecurringPaymentMinOrderByAggregateInput
+    _sum?: RecurringPaymentSumOrderByAggregateInput
+  }
+
+  export type RecurringPaymentScalarWhereWithAggregatesInput = {
+    AND?: RecurringPaymentScalarWhereWithAggregatesInput | RecurringPaymentScalarWhereWithAggregatesInput[]
+    OR?: RecurringPaymentScalarWhereWithAggregatesInput[]
+    NOT?: RecurringPaymentScalarWhereWithAggregatesInput | RecurringPaymentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RecurringPayment"> | string
+    userId?: StringWithAggregatesFilter<"RecurringPayment"> | string
+    fromAccountId?: StringWithAggregatesFilter<"RecurringPayment"> | string
+    toAccountId?: StringWithAggregatesFilter<"RecurringPayment"> | string
+    amount?: DecimalWithAggregatesFilter<"RecurringPayment"> | Decimal | DecimalJsLike | number | string
+    currency?: StringWithAggregatesFilter<"RecurringPayment"> | string
+    interval?: EnumRecurringIntervalWithAggregatesFilter<"RecurringPayment"> | $Enums.RecurringInterval
+    nextRunAt?: DateTimeWithAggregatesFilter<"RecurringPayment"> | Date | string
+    lastRunAt?: DateTimeNullableWithAggregatesFilter<"RecurringPayment"> | Date | string | null
+    description?: StringNullableWithAggregatesFilter<"RecurringPayment"> | string | null
+    status?: EnumRecurringPaymentStatusWithAggregatesFilter<"RecurringPayment"> | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeWithAggregatesFilter<"RecurringPayment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RecurringPayment"> | Date | string
+  }
+
   export type TransactionCreateInput = {
     id?: string
     fromAccountId: string
@@ -2221,6 +3612,118 @@ export namespace Prisma {
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
     reference?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringPaymentCreateInput = {
+    id?: string
+    userId: string
+    fromAccountId: string
+    toAccountId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    interval: $Enums.RecurringInterval
+    nextRunAt: Date | string
+    lastRunAt?: Date | string | null
+    description?: string | null
+    status?: $Enums.RecurringPaymentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RecurringPaymentUncheckedCreateInput = {
+    id?: string
+    userId: string
+    fromAccountId: string
+    toAccountId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    interval: $Enums.RecurringInterval
+    nextRunAt: Date | string
+    lastRunAt?: Date | string | null
+    description?: string | null
+    status?: $Enums.RecurringPaymentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RecurringPaymentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fromAccountId?: StringFieldUpdateOperationsInput | string
+    toAccountId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    interval?: EnumRecurringIntervalFieldUpdateOperationsInput | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRecurringPaymentStatusFieldUpdateOperationsInput | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringPaymentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fromAccountId?: StringFieldUpdateOperationsInput | string
+    toAccountId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    interval?: EnumRecurringIntervalFieldUpdateOperationsInput | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRecurringPaymentStatusFieldUpdateOperationsInput | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringPaymentCreateManyInput = {
+    id?: string
+    userId: string
+    fromAccountId: string
+    toAccountId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    interval: $Enums.RecurringInterval
+    nextRunAt: Date | string
+    lastRunAt?: Date | string | null
+    description?: string | null
+    status?: $Enums.RecurringPaymentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RecurringPaymentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fromAccountId?: StringFieldUpdateOperationsInput | string
+    toAccountId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    interval?: EnumRecurringIntervalFieldUpdateOperationsInput | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRecurringPaymentStatusFieldUpdateOperationsInput | $Enums.RecurringPaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringPaymentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fromAccountId?: StringFieldUpdateOperationsInput | string
+    toAccountId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    interval?: EnumRecurringIntervalFieldUpdateOperationsInput | $Enums.RecurringInterval
+    nextRunAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumRecurringPaymentStatusFieldUpdateOperationsInput | $Enums.RecurringPaymentStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -2406,6 +3909,121 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumRecurringIntervalFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringInterval | EnumRecurringIntervalFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringIntervalFilter<$PrismaModel> | $Enums.RecurringInterval
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumRecurringPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringPaymentStatus | EnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel> | $Enums.RecurringPaymentStatus
+  }
+
+  export type RecurringPaymentCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fromAccountId?: SortOrder
+    toAccountId?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    interval?: SortOrder
+    nextRunAt?: SortOrder
+    lastRunAt?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RecurringPaymentAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type RecurringPaymentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fromAccountId?: SortOrder
+    toAccountId?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    interval?: SortOrder
+    nextRunAt?: SortOrder
+    lastRunAt?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RecurringPaymentMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    fromAccountId?: SortOrder
+    toAccountId?: SortOrder
+    amount?: SortOrder
+    currency?: SortOrder
+    interval?: SortOrder
+    nextRunAt?: SortOrder
+    lastRunAt?: SortOrder
+    description?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RecurringPaymentSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnumRecurringIntervalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringInterval | EnumRecurringIntervalFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringIntervalWithAggregatesFilter<$PrismaModel> | $Enums.RecurringInterval
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecurringIntervalFilter<$PrismaModel>
+    _max?: NestedEnumRecurringIntervalFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumRecurringPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringPaymentStatus | EnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.RecurringPaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -2428,6 +4046,18 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type EnumRecurringIntervalFieldUpdateOperationsInput = {
+    set?: $Enums.RecurringInterval
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type EnumRecurringPaymentStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RecurringPaymentStatus
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2581,6 +4211,65 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRecurringIntervalFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringInterval | EnumRecurringIntervalFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringIntervalFilter<$PrismaModel> | $Enums.RecurringInterval
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumRecurringPaymentStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringPaymentStatus | EnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel> | $Enums.RecurringPaymentStatus
+  }
+
+  export type NestedEnumRecurringIntervalWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringInterval | EnumRecurringIntervalFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringInterval[] | ListEnumRecurringIntervalFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringIntervalWithAggregatesFilter<$PrismaModel> | $Enums.RecurringInterval
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecurringIntervalFilter<$PrismaModel>
+    _max?: NestedEnumRecurringIntervalFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRecurringPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RecurringPaymentStatus | EnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RecurringPaymentStatus[] | ListEnumRecurringPaymentStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRecurringPaymentStatusWithAggregatesFilter<$PrismaModel> | $Enums.RecurringPaymentStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel>
+    _max?: NestedEnumRecurringPaymentStatusFilter<$PrismaModel>
   }
 
 
