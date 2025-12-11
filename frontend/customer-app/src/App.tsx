@@ -9,6 +9,7 @@ import AccountsPage from "./pages/AccountsPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import ActivityPage from "./pages/ActivityPage";
 import { KycFormPage } from "./pages/KycFormPage";
+import RecurringPaymentsPage from "./pages/RecurringPaymentsPage";
 
 
 function App() {
@@ -55,9 +56,10 @@ function App() {
             {/* index = /dashboard → Overview */}
             <Route index element={<OverviewPage />} />
             {/* other sections (we’ll create these pages next) */}
-            <Route path="accounts" element={<AccountsPage/>} />
-            <Route path="payments" element={<PaymentsPage/>} />
-            <Route path="activity" element={<ActivityPage/>} />
+            <Route path="accounts" element={<AccountsPage />} />
+            <Route path="payments" element={<PaymentsPage />} />
+            <Route path="activity" element={<ActivityPage />} />
+            <Route path="recurring" element={<RecurringPaymentsPage />} />
           </Route>
         </Routes>
       </main>

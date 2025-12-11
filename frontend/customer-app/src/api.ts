@@ -1,16 +1,24 @@
 import axios from "axios";
-import type { User, Account, Transaction, Notification } from "./types";
+import type {
+  User,
+  Account,
+  Transaction,
+  Notification,
+  RecurringPayment,
+  RecurringInterval,
+  RecurringStatus,
+} from "./types";
 
-const AUTH_BASE_URL = "http://localhost";
-const ACCOUNT_BASE_URL = "http://localhost";
-const TRANSACTION_BASE_URL = "http://localhost";
-export const NOTIFICATION_BASE_URL = "http://localhost";
+// const AUTH_BASE_URL = "http://localhost";
+// const ACCOUNT_BASE_URL = "http://localhost";
+// const TRANSACTION_BASE_URL = "http://localhost";
+// export const NOTIFICATION_BASE_URL = "http://localhost";
 
 
-// const AUTH_BASE_URL = "http://localhost:4001";
-// const ACCOUNT_BASE_URL = "http://localhost:4002";
-// const TRANSACTION_BASE_URL = "http://localhost:4003";
-// export const NOTIFICATION_BASE_URL = "http://localhost:4005";
+const AUTH_BASE_URL = "http://localhost:4001";
+const ACCOUNT_BASE_URL = "http://localhost:4002";
+const TRANSACTION_BASE_URL = "http://localhost:4003";
+export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 export type AccountType = "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT";
 
@@ -188,4 +196,68 @@ export async function getMyProfile(token: string) {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data; // contains { user: {...} }
+}
+
+// Payload used when creating a recurring payment from the UI
+export interface CreateRecurringPaymentPayload {
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  currency?: string;
+  interval: RecurringInterval;
+  firstRunAt?: string; // ISO string from a datetime-local input
+  description?: string;
+}
+
+// 1) Create recurring payment
+export async function createRecurringPayment(
+  payload: CreateRecurringPaymentPayload,
+  token: string
+): Promise<{ recurringPayment: RecurringPayment }> {
+  const res = await axios.post(
+    `${TRANSACTION_BASE_URL}/recurring-payments`,
+    payload,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
+}
+
+// 2) List my recurring payments
+export async function getMyRecurringPayments(
+  token: string
+): Promise<{ recurringPayments: RecurringPayment[] }> {
+  const res = await axios.get(
+    `${TRANSACTION_BASE_URL}/recurring-payments/my`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
+}
+
+// 3) Update status / description
+export async function updateRecurringPayment(
+  id: string,
+  data: {
+    status?: RecurringStatus;
+    description?: string;
+  },
+  token: string
+): Promise<{ recurringPayment: RecurringPayment }> {
+  const res = await axios.patch(
+    `${TRANSACTION_BASE_URL}/recurring-payments/${id}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
 }

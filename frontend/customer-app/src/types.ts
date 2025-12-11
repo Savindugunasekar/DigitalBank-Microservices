@@ -55,3 +55,24 @@ export interface Notification {
   createdAt: string;
   readAt: string | null;
 }
+
+// src/types.ts
+
+export type RecurringInterval = "DAILY" | "WEEKLY" | "MONTHLY";
+export type RecurringStatus = "ACTIVE" | "PAUSED" | "CANCELLED";
+
+export interface RecurringPayment {
+  id: string;
+  userId: string;
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  currency: string;
+  interval: RecurringInterval;
+  status: RecurringStatus;
+  description: string | null;
+  nextRunAt: string;
+  lastRunAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}

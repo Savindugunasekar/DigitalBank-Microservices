@@ -28,9 +28,7 @@ function CustomerShell() {
           {user && (
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex flex-col items-end leading-tight">
-                <span className="text-xs font-medium">
-                  {user.fullName}
-                </span>
+                <span className="text-xs font-medium">{user.fullName}</span>
                 <span className="text-[10px] text-slate-300/80">
                   {user.role}
                 </span>
@@ -103,6 +101,19 @@ function CustomerShell() {
               }
             >
               Activity
+            </NavLink>
+            <NavLink
+              to="/dashboard/recurring"
+              className={({ isActive }) =>
+                [
+                  "flex-1 text-center px-3 sm:px-4 py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition",
+                  isActive
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-200/80 hover:bg-white/10",
+                ].join(" ")
+              }
+            >
+              Recurring Payments
             </NavLink>
           </div>
         </nav>
