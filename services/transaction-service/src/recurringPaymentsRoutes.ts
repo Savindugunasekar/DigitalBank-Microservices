@@ -3,6 +3,7 @@ import prisma, { TransactionStatus } from "./prisma";
 import { authMiddleware, AuthedRequest } from "./authMiddleware";
 import type { Prisma } from "@prisma/client";
 import axios from "axios";
+import { Decimal } from "@prisma/client/runtime/library";
 import {
   ACCOUNT_SERVICE_URL,
   FRAUD_SERVICE_URL,
@@ -300,7 +301,7 @@ async function executeRecurringPayment(rec: {
   userId: string;
   fromAccountId: string;
   toAccountId: string;
-  amount: Prisma.Decimal;
+  amount: Decimal;
   currency: string;
   description: string | null;
 }) {
