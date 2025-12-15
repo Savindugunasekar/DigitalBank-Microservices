@@ -3,6 +3,7 @@ import prisma, { TransactionStatus } from "./prisma";
 import { AuthedRequest, authMiddleware, requireRole } from "./authMiddleware";
 import axios from "axios";
 import { ACCOUNT_SERVICE_URL, FRAUD_SERVICE_URL, NOTIFICATION_SERVICE_URL } from "./config";
+import { publishDomainEvent } from "./eventBus";
 
 
 const router = Router();
@@ -113,7 +114,9 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
       if (err.response) {
         const status = err.response.status;
         if (status === 404) {
-          return res.status(400).json({ message: "fromAccount does not exist" });
+          return res
+            .status(400)
+            .json({ message: "fromAccount does not exist" });
         }
         if (status === 403) {
           return res.status(403).json({
@@ -153,6 +156,18 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
     // 3) If BLOCK → deny request (no DB write, no transfer)
     // ---------------------------------------------------------
     if (decision === "BLOCK") {
+      if (req.user?.userId) {
+        void publishDomainEvent("transaction.blocked", {
+          userId: req.user.userId,
+          fromAccountId,
+          toAccountId,
+          amount: numericAmount,
+          currency: currency || "LKR",
+          reasons,
+          score,
+        });
+      }
+
       return res.status(403).json({
         message: "Transaction blocked due to high fraud risk",
         fraud: { decision, score, reasons },
@@ -174,14 +189,28 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
       });
 
       // Send fraud alert notification to the user
+      // if (req.user?.userId) {
+      //   void sendNotification({
+      //     userId: req.user.userId,
+      //     type: "FRAUD_ALERT",
+      //     title: "Transaction flagged for review",
+      //     message: `A transaction of LKR ${numericAmount.toFixed(
+      //       2
+      //     )} to account ${toAccountId} was flagged for manual review.`,
+      //   });
+      // }
+
+      // Publish domain event for other services (notifications, analytics, etc.)
       if (req.user?.userId) {
-        void sendNotification({
+        void publishDomainEvent("transaction.flagged", {
+          transactionId: flaggedTx.id,
           userId: req.user.userId,
-          type: "FRAUD_ALERT",
-          title: "Transaction flagged for review",
-          message: `A transaction of LKR ${numericAmount.toFixed(
-            2
-          )} to account ${toAccountId} was flagged for manual review.`,
+          fromAccountId,
+          toAccountId,
+          amount: numericAmount,
+          currency: currency || "LKR",
+          reference: flaggedTx.reference,
+          fraud: { decision, score, reasons },
         });
       }
 
@@ -241,14 +270,27 @@ router.post("/transactions", authMiddleware, async (req: AuthedRequest, res) => 
     });
 
     // Send transaction notification to the user
+    // if (req.user?.userId) {
+    //   void sendNotification({
+    //     userId: req.user.userId,
+    //     type: "TRANSACTION",
+    //     title: "Transfer successful",
+    //     message: `You sent LKR ${numericAmount.toFixed(
+    //       2
+    //     )} to account ${toAccountId}.`,
+    //   });
+    // }
+
+    // Publish domain event for executed transaction
     if (req.user?.userId) {
-      void sendNotification({
+      void publishDomainEvent("transaction.executed", {
+        transactionId: tx.id,
         userId: req.user.userId,
-        type: "TRANSACTION",
-        title: "Transfer successful",
-        message: `You sent LKR ${numericAmount.toFixed(
-          2
-        )} to account ${toAccountId}.`,
+        fromAccountId,
+        toAccountId,
+        amount: numericAmount,
+        currency: currency || "LKR",
+        reference: reference || null,
       });
     }
 
@@ -341,7 +383,7 @@ router.post(
       try {
         const authHeader = req.headers["authorization"] || "";
         await axios.post(
-           `${ACCOUNT_SERVICE_URL}/accounts/internal-transfer`,
+          `${ACCOUNT_SERVICE_URL}/accounts/internal-transfer`,
           {
             fromAccountId: tx.fromAccountId,
             toAccountId: tx.toAccountId,
@@ -363,7 +405,10 @@ router.post(
           }
         }
 
-        console.error("Error executing internal transfer (admin approve):", err);
+        console.error(
+          "Error executing internal transfer (admin approve):",
+          err
+        );
         return res.status(502).json({
           message:
             "Failed to execute transfer via Account service while approving",
@@ -375,6 +420,18 @@ router.post(
         data: {
           status: TransactionStatus.EXECUTED,
         },
+      });
+
+      // Publish executed event so notification-service writes the notification
+      void publishDomainEvent("transaction.executed", {
+        userId: req.user?.userId, // admin id (optional)
+        transactionId: updated.id,
+        fromAccountId: updated.fromAccountId,
+        toAccountId: updated.toAccountId,
+        amount: Number(updated.amount),
+        currency: "LKR",
+        reference: updated.reference || null,
+        approvedByAdmin: true,
       });
 
       return res.json({
@@ -420,6 +477,17 @@ router.post(
           status: TransactionStatus.REJECTED,
         },
       });
+
+      void publishDomainEvent("transaction.rejected", {
+        transactionId: updated.id,
+        fromAccountId: updated.fromAccountId,
+        toAccountId: updated.toAccountId,
+        amount: Number(updated.amount),
+        currency: "LKR",
+        reference: updated.reference || null,
+        rejectedByAdmin: true,
+      });
+
 
       return res.json({
         message: "Transaction rejected",

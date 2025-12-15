@@ -104,6 +104,18 @@ services:
     ports:
       - "4005:4005"
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: digital-bank-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP (for services)
+      - "15672:15672"  # Management UI (optional)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - default
+
 
 volumes:
   pgdata:

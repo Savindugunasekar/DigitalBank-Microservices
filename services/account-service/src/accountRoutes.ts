@@ -179,6 +179,30 @@ router.post(
     }
   }
 );
+// GET /accounts/:id/owner
+// returns the owner userId for an account
+router.get(
+  "/accounts/:id/owner",
+  authMiddleware,
+  async (req: AuthedRequest, res) => {
+    try {
+      const { id } = req.params;
+
+      const acc = await prisma.account.findUnique({
+        where: { id },
+        select: { id: true, userId: true },
+      });
+
+      if (!acc) return res.status(404).json({ message: "Account not found" });
+
+      // IMPORTANT: we do NOT expose more data than needed
+      return res.json({ accountId: acc.id, userId: acc.userId });
+    } catch (err) {
+      console.error("Get account owner error:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
 
 
 

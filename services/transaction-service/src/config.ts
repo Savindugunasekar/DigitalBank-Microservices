@@ -11,3 +11,6 @@ export const FRAUD_SERVICE_URL =
 
 export const NOTIFICATION_SERVICE_URL =
   process.env.NOTIFICATION_SERVICE_URL ?? "http://localhost:4005";
+
+export const RABBITMQ_URL =
+  process.env.RABBITMQ_URL || "amqp://guest:guest@localhost:5672";
