@@ -9,16 +9,16 @@ import type {
   RecurringStatus,
 } from "./types";
 
-// const AUTH_BASE_URL = "http://localhost";
-// const ACCOUNT_BASE_URL = "http://localhost";
-// const TRANSACTION_BASE_URL = "http://localhost";
-// export const NOTIFICATION_BASE_URL = "http://localhost";
+const AUTH_BASE_URL = "http://localhost";
+const ACCOUNT_BASE_URL = "http://localhost";
+const TRANSACTION_BASE_URL = "http://localhost";
+export const NOTIFICATION_BASE_URL = "http://localhost";
 
 
-const AUTH_BASE_URL = "http://localhost:4001";
-const ACCOUNT_BASE_URL = "http://localhost:4002";
-const TRANSACTION_BASE_URL = "http://localhost:4003";
-export const NOTIFICATION_BASE_URL = "http://localhost:4005";
+// const AUTH_BASE_URL = "http://localhost:4001";
+// const ACCOUNT_BASE_URL = "http://localhost:4002";
+// const TRANSACTION_BASE_URL = "http://localhost:4003";
+// export const NOTIFICATION_BASE_URL = "http://localhost:4005";
 
 export type AccountType = "SAVINGS" | "CURRENT" | "FIXED_DEPOSIT";
 

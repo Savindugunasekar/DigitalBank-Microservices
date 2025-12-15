@@ -1,0 +1,195 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: digital-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: savindugunasekara/digital-bank-auth-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4001
+          env:
+            - name: PORT
+              value: "4001"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: digital-bank-secrets
+                  key: JWT_SECRET
+            - name: DATABASE_URL
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_auth?schema=public"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4001
+            initialDelaySeconds: 30
+            periodSeconds: 20
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-service
+  namespace: digital-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: account-service
+  template:
+    metadata:
+      labels:
+        app: account-service
+    spec:
+      containers:
+        - name: account-service
+          image: savindugunasekara/digital-bank-account-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "4002"
+            - name: DATABASE_URL
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_account?schema=public"
+            - name: JWT_SECRET
+              value: "supersecret_change_me"
+          ports:
+            - containerPort: 4002
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-service
+  namespace: digital-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transaction-service
+  template:
+    metadata:
+      labels:
+        app: transaction-service
+    spec:
+      containers:
+        - name: transaction-service
+          image: savindugunasekara/digital-bank-transaction-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "4003"
+            - name: DATABASE_URL
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_transaction?schema=public"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:4001"
+            - name: ACCOUNT_SERVICE_URL
+              value: "http://account-service:4002"
+            - name: FRAUD_SERVICE_URL
+              value: "http://fraud-service:4004"
+            - name: NOTIFICATION_SERVICE_URL
+              value: "http://notification-service:4005"
+            - name: JWT_SECRET
+              value: "supersecret_change_me"
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: digital-bank-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: digital-bank-secrets
+                  key: RABBITMQ_PASSWORD
+            - name: RABBITMQ_URL
+              value: "amqp://$(RABBITMQ_USER):$(RABBITMQ_PASSWORD)@rabbitmq:5672"
+
+          ports:
+            - containerPort: 4003
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-service
+  namespace: digital-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fraud-service
+  template:
+    metadata:
+      labels:
+        app: fraud-service
+    spec:
+      containers:
+        - name: fraud-service
+          image: savindugunasekara/digital-bank-fraud-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "4004"
+            - name: JWT_SECRET
+              value: "supersecret_change_me"
+          ports:
+            - containerPort: 4004
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: digital-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: savindugunasekara/digital-bank-notification-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              value: "4005"
+            - name: DATABASE_URL
+              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_notification?schema=public"
+            - name: JWT_SECRET
+              value: "supersecret_change_me"
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: digital-bank-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: digital-bank-secrets
+                  key: RABBITMQ_PASSWORD
+            - name: RABBITMQ_URL
+              value: "amqp://$(RABBITMQ_USER):$(RABBITMQ_PASSWORD)@rabbitmq:5672"
+
+          ports:
+            - containerPort: 4005

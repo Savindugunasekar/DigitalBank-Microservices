@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: digital-bank
+spec:
+  type: ClusterIP
+  selector:
+    app: auth-service
+  ports:
+    - name: http
+      port: 4001
+      targetPort: 4001
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: account-service
+  namespace: digital-bank
+spec:
+  type: ClusterIP
+  selector:
+    app: account-service
+  ports:
+    - name: http
+      port: 4002
+      targetPort: 4002
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+  namespace: digital-bank
+spec:
+  type: ClusterIP
+  selector:
+    app: transaction-service
+  ports:
+    - name: http
+      port: 4003
+      targetPort: 4003
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fraud-service
+  namespace: digital-bank
+spec:
+  type: ClusterIP
+  selector:
+    app: fraud-service
+  ports:
+    - name: http
+      port: 4004
+      targetPort: 4004
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: digital-bank
+spec:
+  type: ClusterIP
+  selector:
+    app: notification-service
+  ports:
+    - name: http
+      port: 4005
+      targetPort: 4005
