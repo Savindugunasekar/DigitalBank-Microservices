@@ -1,121 +1,121 @@
-version: "3.9"
+# version: "3.9"
 
-services:
-  db:
-    image: postgres:16
-    container_name: digital-bank-postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: digital_bank_auth
-    ports:
-      - "5433:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d digital_bank_auth"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+# services:
+#   db:
+#     image: postgres:16
+#     container_name: digital-bank-postgres
+#     restart: always
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: digital_bank_auth
+#     ports:
+#       - "5433:5432"
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres -d digital_bank_auth"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
 
-  auth-service:
-    build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile
-    container_name: auth-service
-    restart: always
-    environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_auth?schema=public"
-      JWT_SECRET: "supersecret_change_me"
-      PORT: "4001"
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "4001:4001"
+#   auth-service:
+#     build:
+#       context: ./services/auth-service
+#       dockerfile: Dockerfile
+#     container_name: auth-service
+#     restart: always
+#     environment:
+#       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_auth?schema=public"
+#       JWT_SECRET: "supersecret_change_me"
+#       PORT: "4001"
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     ports:
+#       - "4001:4001"
 
-  account-service:
-    build:
-      context: ./services/account-service
-      dockerfile: Dockerfile
-    container_name: account-service
-    restart: always
-    environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_account?schema=public"
-      JWT_SECRET: "supersecret_change_me"
-      PORT: "4002"
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "4002:4002"
+#   account-service:
+#     build:
+#       context: ./services/account-service
+#       dockerfile: Dockerfile
+#     container_name: account-service
+#     restart: always
+#     environment:
+#       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_account?schema=public"
+#       JWT_SECRET: "supersecret_change_me"
+#       PORT: "4002"
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     ports:
+#       - "4002:4002"
 
-  transaction-service:
-    build:
-      context: ./services/transaction-service
-      dockerfile: Dockerfile
-    container_name: transaction-service
-    restart: always
-    environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_transaction?schema=public"
-      AUTH_SERVICE_URL: "http://auth-service:4001"
-      ACCOUNT_SERVICE_URL: "http://account-service:4002"
-      FRAUD_SERVICE_URL: "http://fraud-service:4004"
-      NOTIFICATION_SERVICE_URL: "http://notification-service:4005"
-      JWT_SECRET: "supersecret_change_me"
- # we'll add fraud-service next
-      PORT: "4003"
-    depends_on:
-      - auth-service
-      - account-service
-      - fraud-service
-      - notification-service
-      - db
+#   transaction-service:
+#     build:
+#       context: ./services/transaction-service
+#       dockerfile: Dockerfile
+#     container_name: transaction-service
+#     restart: always
+#     environment:
+#       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_transaction?schema=public"
+#       AUTH_SERVICE_URL: "http://auth-service:4001"
+#       ACCOUNT_SERVICE_URL: "http://account-service:4002"
+#       FRAUD_SERVICE_URL: "http://fraud-service:4004"
+#       NOTIFICATION_SERVICE_URL: "http://notification-service:4005"
+#       JWT_SECRET: "supersecret_change_me"
+#  # we'll add fraud-service next
+#       PORT: "4003"
+#     depends_on:
+#       - auth-service
+#       - account-service
+#       - fraud-service
+#       - notification-service
+#       - db
          
-    ports:
-      - "4003:4003"
-  fraud-service:
-    build:
-      context: ./services/fraud-service
-      dockerfile: Dockerfile
-    container_name: fraud-service
-    restart: always
-    environment:
-      PORT: "4004"
-      JWT_SECRET: "supersecret_change_me"
-    depends_on:
-      - db
-    ports:
-      - "4004:4004"
+#     ports:
+#       - "4003:4003"
+#   fraud-service:
+#     build:
+#       context: ./services/fraud-service
+#       dockerfile: Dockerfile
+#     container_name: fraud-service
+#     restart: always
+#     environment:
+#       PORT: "4004"
+#       JWT_SECRET: "supersecret_change_me"
+#     depends_on:
+#       - db
+#     ports:
+#       - "4004:4004"
 
-  notification-service:
-    build:
-      context: ./services/notification-service
-      dockerfile: Dockerfile
-    container_name: notification-service
-    restart: always
-    environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_notification?schema=public"
-      JWT_SECRET: "supersecret_change_me"
-      PORT: "4005"
-    depends_on:
-      - db
-    ports:
-      - "4005:4005"
+#   notification-service:
+#     build:
+#       context: ./services/notification-service
+#       dockerfile: Dockerfile
+#     container_name: notification-service
+#     restart: always
+#     environment:
+#       DATABASE_URL: "postgresql://postgres:postgres@db:5432/digital_bank_notification?schema=public"
+#       JWT_SECRET: "supersecret_change_me"
+#       PORT: "4005"
+#     depends_on:
+#       - db
+#     ports:
+#       - "4005:4005"
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: digital-bank-rabbitmq
-    ports:
-      - "5672:5672"    # AMQP (for services)
-      - "15672:15672"  # Management UI (optional)
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - default
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     container_name: digital-bank-rabbitmq
+#     ports:
+#       - "5672:5672"    # AMQP (for services)
+#       - "15672:15672"  # Management UI (optional)
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+#     networks:
+#       - default
 
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:
