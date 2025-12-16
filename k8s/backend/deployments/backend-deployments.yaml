@@ -28,7 +28,7 @@ spec:
                   name: digital-bank-secrets
                   key: JWT_SECRET
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_auth?schema=public"
+              value: "postgresql://postgres:#Savpg1234@digital-bank-postgres.c676iawos7ws.us-east-1.rds.amazonaws.com:5432/digital_bank?schema=auth"
           readinessProbe:
             httpGet:
               path: /health
@@ -66,7 +66,7 @@ spec:
             - name: PORT
               value: "4002"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_account?schema=public"
+              value: "postgresql://postgres:#Savpg1234@digital-bank-postgres.c676iawos7ws.us-east-1.rds.amazonaws.com:5432/digital_bank?schema=account"
             - name: JWT_SECRET
               value: "supersecret_change_me"
           ports:
@@ -96,7 +96,7 @@ spec:
             - name: PORT
               value: "4003"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_transaction?schema=public"
+              value: "postgresql://postgres:#Savpg1234@digital-bank-postgres.c676iawos7ws.us-east-1.rds.amazonaws.com:5432/digital_bank?schema=transaction"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service:4001"
             - name: ACCOUNT_SERVICE_URL
@@ -175,7 +175,7 @@ spec:
             - name: PORT
               value: "4005"
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@host.docker.internal:5433/digital_bank_notification?schema=public"
+              value: "postgresql://postgres:#Savpg1234@digital-bank-postgres.c676iawos7ws.us-east-1.rds.amazonaws.com:5432/digital_bank?schema=notification"
             - name: JWT_SECRET
               value: "supersecret_change_me"
             - name: RABBITMQ_USER
