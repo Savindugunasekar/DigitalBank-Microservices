@@ -58,7 +58,7 @@ function SignupPage() {
       <div className="w-full max-w-md bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
         <header className="mb-6">
           <h1 className="text-xl font-semibold text-slate-100">
-            Create your Digital Bank account
+            Create your Digital Bank account test
           </h1>
           <p className="text-xs text-slate-400 mt-1">
             Sign up as a customer to view balances, make transfers and more.
